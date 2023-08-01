@@ -14,18 +14,18 @@ const CONFIGURATION = {
 const sessionClient = new SessionsClient(CONFIGURATION);
 
 module.exports = class IntentMatcher {
-    constructor() {
-        this.type = 'default';
+    constructor(languageCode) {
+        this.languageCode = languageCode;
     };
 
-    async detectIntent(userId, text, languageCode) {
+    async detectIntent(userId, text) {
         const sessionPath = sessionClient.projectAgentSessionPath(PROJECTID, userId);
         const request = {
             session: sessionPath,
             queryInput: {
                 text: {
                     text: text,
-                    languageCode: languageCode,
+                    languageCode: this.languageCode,
                 }
             },
             queryParams: {

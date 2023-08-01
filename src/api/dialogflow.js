@@ -6,6 +6,7 @@ router.get('/', (req, res) => {
     res.json(['Dialogflow']);
 });
 
+// * Processes Dialogflow Fulfillment
 router.post('/', (req, res) => {
     res.json(['Dialogflow']);
 });

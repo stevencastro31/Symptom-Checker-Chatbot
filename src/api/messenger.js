@@ -23,11 +23,13 @@ router.post('/', async (req, res) => {
             const entry = body.entry[0];
             const messaging = entry.messaging;
 
-            messaging.forEach(message => {
+            messaging.forEach(async (message) => {
                 const senderId = message.sender.id;
-                const text = message.message.text;
+                const messageText = message.message.text;
 
-                const response = MessengerChatManager.readMessage(senderId, text);
+                const response = await MessengerChatManager.readMessage(senderId, messageText);
+                const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
+                await MessengerChatManager.sendMessage(senderId, fulfillmentMessages)
             });
         } catch (exception) {
             console.log('Message Error');
