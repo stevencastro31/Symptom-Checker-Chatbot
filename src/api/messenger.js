@@ -5,6 +5,7 @@ const router = express.Router();
 const ChatManager = require('../model/chat-manager');
 const MessengerChatManager = new ChatManager();
 
+// * Verifies new webhook URLs set in the Meta App Dashboard 
 router.get('/', async (req, res) => {
     if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
         console.log('> Verifying Webhook');
@@ -15,6 +16,7 @@ router.get('/', async (req, res) => {
     }
 });
 
+// * Captures user messages sent through Messenger
 router.post('/', async (req, res) => {
     const body = req.body;
 
