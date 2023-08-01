@@ -18,7 +18,9 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@google-cloud/dialogflow": "^5.9.0",
     "cors": "^2.8.5",
+    "dialogflow-fulfillment": "^0.6.1",
     "dotenv": "^16.1.4",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
