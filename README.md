@@ -1,2 +1,1 @@
-# Symptom-Checker-Chatbot
-Thesis
+Production: https://symptom-checker-chatbot.vercel.app
