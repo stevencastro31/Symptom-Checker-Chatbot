@@ -2,7 +2,7 @@ const express = require('express');
 
 const router = express.Router();
 
-const ChatManager = require('../model/chat-manager');
+const ChatManager = require('../../public/model/chat-manager');
 const MessengerChatManager = new ChatManager();
 
 // * Verifies new webhook URLs set in the Meta App Dashboard 

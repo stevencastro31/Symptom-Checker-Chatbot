@@ -14,7 +14,7 @@ module.exports = class IntentMatcher {
     };
 
     async detectIntent(userId, text) {
-        const sessionPath = sessionClient.projectAgentSessionPath(this.projectId, userId);
+        const sessionPath = this.sessionClient.projectAgentSessionPath(this.projectId, userId);
         const request = {
             session: sessionPath,
             queryInput: {
@@ -27,6 +27,6 @@ module.exports = class IntentMatcher {
                 analyzeQueryTextSentiment: true,
             },
         };
-        return sessionClient.detectIntent(request);
+        return this.sessionClient.detectIntent(request);
     }
 }
