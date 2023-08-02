@@ -1,6 +1,9 @@
 const IntentMatcher = require('./intent-matcher');
-const EnglishIntentMatcher = new IntentMatcher('en');
-const FilipinoIntentMatcher = new IntentMatcher('tl');
+
+const CREDENTIALS = JSON.parse(process.env.CREDENTIALS);
+
+const EnglishIntentMatcher = new IntentMatcher(CREDENTIALS, 'en');
+const FilipinoIntentMatcher = new IntentMatcher(CREDENTIALS, 'tl');
 const axios = require('axios');
 
 module.exports = class ChatManager { 
