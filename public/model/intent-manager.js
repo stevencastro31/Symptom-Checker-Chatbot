@@ -13,23 +13,30 @@ module.exports = class IntentManager {
         this.intentClient = new IntentsClient(this.configuration);
     };
 
-    createIntent(intent) {
+    async createIntent(intent) {
         if (intent instanceof Intent) {
-
+            const request = intent.buildIntentRequest(this.intentClient.projectAgentPath(this.projectId));
+            const [response] = await this.intentClient.createIntent(request);
+            console.log(`Created Intent: ${response.displayName}`);
         } else {
             console.log('Create Intent Error: Parameter is not an Intent Class');
         }
     };
 
-    deleteIntent(intent) {
+    async deleteIntent(intent) {
         if (intent instanceof Intent) {
-
+            const intentId = await this.getIntentId(intent);
+            const request = {
+                name: intentId,
+            };
+            const response = await this.intentClient.deleteIntent(request);
+            console.log(`Deleted Intent: ${intent.displayName}`);
         } else {
             console.log('Delete Intent Error: Parameter is not an Intent Class');
         }
     };
 
-    updateIntent(intent) {
+    async updateIntent(intent) {
         if (intent instanceof Intent) {
 
         } else {
@@ -37,7 +44,52 @@ module.exports = class IntentManager {
         }
     };
 
+    async getIntentId(intent) {
+        if (intent instanceof Intent) {
+            var intentId = null;
+            const displayName = intent.displayName;
+            const request = {
+                parent: this.intentClient.projectAgentPath(this.projectId),
+            };
+            const [response] = await this.intentClient.listIntents(request);
+            response.every(intentData =>  {
+                if (intentData.displayName === displayName) {
+                    intentId = intentData.name;
+                    console.log(intentId);
+                    return false;
+                } else {
+                    return true;
+                }
+            });
+            return intentId;
+        } else {
+            console.log('Get Intent ID Error: Parameter is not an Intent Class');
+        }    
+    }
+
     getProjectAgentSessionContextPathTemplate() {
         return this.intentClient.projectAgentSessionContextPath(this.projectId, 'token', '{CONTEXT}');
     };
 };
+
+
+const getIntentID = async (inputName) => {
+	var agentPath = intentClient.projectAgentPath(PROJECTID);
+
+	var req = {
+		parent: agentPath
+	}
+
+	var [res] = await intentClient.listIntents(req);
+	var intentID = [];
+
+	res.every(intent => {
+		if (inputName === intent.displayName) {
+			intentID.push(intent.name);
+			return false;
+		} else {
+			return true;
+		}
+	});
+	return intentID[0];
+}

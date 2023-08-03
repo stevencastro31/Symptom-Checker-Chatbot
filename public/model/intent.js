@@ -50,7 +50,11 @@ module.exports = class Intent {
 const BLOCK = '█';
 
 function formatIntentName(intentName) {
-    return intentName;
+    if (intentName) {
+        return intentName;
+    } else {
+        console.log('Name Error: Defined Intent Name has Invalid Format/Missing');
+    }
 };
 
 function formatTrainingPhrases(trainingPhrases, delimiter) {
@@ -197,11 +201,11 @@ function formatEvents(events, delimiter) {
 };
 
 function formatWebhookState(webhookState) { 
-    return (webhookState === '1') ? 'WEBHOOK_STATE_ENABLED' : 'WEBHOOK_STATE_UNSPECIFIED';
+    return (parseInt(webhookState) === 1) ? 'WEBHOOK_STATE_ENABLED' : 'WEBHOOK_STATE_UNSPECIFIED';
 };
 
 function formatFallbackState(fallbackState) {
-    return (fallbackState === '1');
+    return (parseInt(fallbackState) === 1);
 };
 
 function formatLanguageCode(languageCode) {

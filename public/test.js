@@ -9,41 +9,20 @@ require('dotenv').config();
 IntentExcelLoader = new ExcelLoader();
 const data = IntentExcelLoader.loadExcelSheet('../public/intent-definition.xlsx', 'intents');
 
-const manager = new IntentManager(JSON.parse(process.env.CREDENTIALS));
+const intentManager = new IntentManager(JSON.parse(process.env.CREDENTIALS));
 
 // Build Intent Object
-const intent = new Intent(data[0], null, manager.getProjectAgentSessionContextPathTemplate());
+// console.log(intentManager.getIntentId(intent));
 
-// Build Create Intent Request
-console.log(intent.buildIntentRequest('123').intent.events);
+async function main() {
+    const intent = new Intent(data[0], null, intentManager.getProjectAgentSessionContextPathTemplate());
 
-// console.log(IntentExcelLoader.loadExcelSheet('../../public/intent-definition.xlsx', 'introduction'));
+    // console.log(intent.buildIntentRequest());
+    // return;
 
+    await intentManager.deleteIntent(intent);
+    await intentManager.createIntent(intent);
+};
 
-// ChatIntentManager.createIntent(new Intent(1, 1, 1, 1, 1, 1, 1, 1));
-// ChatIntentManager.createIntent(123);
+main();
 
-
-/*
-
-
-
-
-
-
-
-
-    Hello there, I am Steven!
-
-    Is there a problem?
-
-    ,.:()!-_/""|||||
-
-    | ? 
-
-    Intent time symptom
-
-    I have been {@symptom:coughing} for a while now
-
-
-*/
