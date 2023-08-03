@@ -1,6 +1,6 @@
 module.exports = class Intent {
-    constructor(intentJson, delimiters) {
-        if (delimiters === undefined) {
+    constructor(intentJson, delimiters, contextPathTemplate) {
+        if (delimiters === undefined || delimiters === null) {
             // * Default Delimiters
             this.delimiters = {
                 trainingPhrases: ',',
@@ -18,8 +18,9 @@ module.exports = class Intent {
         this.parameters = formatParameters(intentJson.parameters, this.delimiters.parameters);
         this.trainingPhrases = formatTrainingPhrases(intentJson.trainingPhrases, this.delimiters.trainingPhrases);
         this.messages = formatResponsePhrases(intentJson.responsePhrases, this.delimiters.responsePhrases);
-        this.inputContextNames = formatInputContext(intentJson.inputContext, this.delimiters.inputContext);
-        this.outputContexts = formatOutputContext(intentJson.outputContext, this.delimiters.outputContext);
+        this.contextPathTemplate = contextPathTemplate;
+        this.inputContextNames = formatInputContext(intentJson.inputContext, this.delimiters.inputContext, this.contextPathTemplate);
+        this.outputContexts = formatOutputContext(intentJson.outputContext, this.delimiters.outputContext, this.contextPathTemplate);
         this.webhookState = formatWebhookState(intentJson.isWebhook);
         this.isFallback = formatFallbackState(intentJson.isFallback);
         this.events = formatEvents(intentJson.events, this.delimiters.events);
@@ -100,12 +101,11 @@ function formatResponsePhrases(responsePhrases, delimiter) {
     if (responsePhrases) {
         try {
             const part = {
-                text: json.responsePhrases.split(delimiter);
+                text: responsePhrases.split(delimiter),
             };
 
             // ? platform: 'FACEBOOK',) 
             const responsePhrase = {
-                // platform: 'FACEBOOK',
                 text: part
             };
             formattedResponsePhrases.push(responsePhrase);
@@ -116,12 +116,41 @@ function formatResponsePhrases(responsePhrases, delimiter) {
     return formattedResponsePhrases;
 };
 
-function formatInputContext(inputContext, delimiter) {
-    return inputContext;
+function formatInputContext(inputContext, delimiter, contextPathTemplate) {
+    const formattedInputContext = [];
+    if (inputContext) {
+        try {
+            const contexts = inputContext.replace(/\s/g, "").split(delimiter);
+            contexts.forEach(context => {
+                formattedInputContext.push(contextPathTemplate.replace('{CONTEXT}', context.toLowerCase()));
+            });
+        } catch (exception) {
+            console.log(exception);
+            console.log('Input Context Error: Defined Input Context has Invalid Format');
+        }
+    }
+    return formattedInputContext;
 };
 
-function formatOutputContext(outputContext, delimiter) {
-    return outputContext;
+function formatOutputContext(outputContext, delimiter, contextPathTemplate) {
+    const formattedOutputContext = [];
+    // * Output Context Format { (ContextName):(Lifespan) } Ex. Introduction:3
+    if (outputContext) {
+        try {
+            const contexts = outputContext.replace(/\s/g, "").split(delimiter);
+            contexts.forEach(context => {
+                const outputContextData = context.split(':');
+                const part = {
+                    name: contextPathTemplate.replace('{CONTEXT}', outputContextData[0].toLowerCase()),
+                    lifespanCount: parseInt(outputContextData[1])
+                };              
+                formattedOutputContext.push(part);
+            });
+        } catch (exception) {
+            console.log('Output Context Error: Defined Output Context has Invalid Format');
+        }
+    }
+    return formattedOutputContext;
 };
 
 function formatParameters(parameters, delimiter) {
@@ -158,7 +187,7 @@ function formatEvents(events, delimiter) {
         events = events.replace(/\s/g, "").split(delimiter);
         events.forEach(event => {
             try {
-                formattedEvents.push(event);
+                formattedEvents.push(event.toLowerCase());
             } catch (exception) {
                 console.log('Event Error: Defined Event has Invalid Format');
             }
@@ -185,4 +214,5 @@ function formatLanguageCode(languageCode) {
 
 /*
     ? Add Support for Priority Property
+    ? Add Support for Quick Replies
 */

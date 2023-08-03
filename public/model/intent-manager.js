@@ -36,4 +36,8 @@ module.exports = class IntentManager {
             console.log('Update Intent Error: Parameter is not an Intent Class');
         }
     };
+
+    getProjectAgentSessionContextPathTemplate() {
+        return this.intentClient.projectAgentSessionContextPath(this.projectId, 'token', '{CONTEXT}');
+    };
 };

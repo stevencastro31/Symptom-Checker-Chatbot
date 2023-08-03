@@ -3,14 +3,19 @@ const ExcelLoader = require('./model/excel-loader');
 const IntentManager = require('./model/intent-manager');
 
 
+require('dotenv').config({path: '../.env'});
+require('dotenv').config();
+
 IntentExcelLoader = new ExcelLoader();
-
-
 const data = IntentExcelLoader.loadExcelSheet('../public/intent-definition.xlsx', 'intents');
 
-const intent = new Intent(data[0]);
+const manager = new IntentManager(JSON.parse(process.env.CREDENTIALS));
 
-console.log(intent.buildIntentRequest('123'));
+// Build Intent Object
+const intent = new Intent(data[0], null, manager.getProjectAgentSessionContextPathTemplate());
+
+// Build Create Intent Request
+console.log(intent.buildIntentRequest('123').intent.events);
 
 // console.log(IntentExcelLoader.loadExcelSheet('../../public/intent-definition.xlsx', 'introduction'));
 
