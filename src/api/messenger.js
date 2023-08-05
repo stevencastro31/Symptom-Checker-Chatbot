@@ -25,9 +25,13 @@ router.post('/', async (req, res) => {
             const entry = body.entry[0];
             const messaging = entry.messaging;
 
+            console.log(messaging);
+
             messaging.forEach(async (message) => {
                 const senderId = message.sender.id;
                 const messageText = message.message.text;
+
+                console.log(senderId);
 
                 const response = MessengerChatManager.readMessage(senderId, messageText).then((response) => {
                     console.log('MESSAGE READ');
