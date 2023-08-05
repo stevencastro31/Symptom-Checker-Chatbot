@@ -29,9 +29,23 @@ router.post('/', async (req, res) => {
                 const senderId = message.sender.id;
                 const messageText = message.message.text;
 
-                const response = await MessengerChatManager.readMessage(senderId, messageText);
-                const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
-                await MessengerChatManager.sendMessage(senderId, fulfillmentMessages)
+                const response = MessengerChatManager.readMessage(senderId, messageText).then((response) => {
+                    console.log('MESSAGE READ');
+                    console.log(response);
+
+                    const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
+                    MessengerChatManager.sendMessage(senderId, fulfillmentMessages).then((response) => {
+                        console.log('MESSAGE SENT');
+                        console.log(response);
+                    }).catch((error) => {
+                        console.log('MESSAGE NOT SENT');
+                        console.log(error);
+                    });
+
+                }).catch((error) => {
+                    console.log('MESSAGE NOT READ');
+                    console.log(error);
+                });
             });
         } catch (exception) {
             console.log('Message Error');
