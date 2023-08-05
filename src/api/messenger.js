@@ -25,31 +25,18 @@ router.post('/', async (req, res) => {
             const entry = body.entry[0];
             const messaging = entry.messaging;
 
-            console.log(messaging);
-
             messaging.forEach(async (message) => {
                 const senderId = message.sender.id;
                 const messageText = message.message.text;
 
-                console.log(senderId);
+                console.log('1');
+                const response = await MessengerChatManager.readMessage(senderId, messageText)
+                const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
+                console.log('2');
+                console.log(fulfillmentMessages);
 
-                const response = MessengerChatManager.readMessage(senderId, messageText).then((response) => {
-                    console.log('MESSAGE READ');
-                    console.log(response);
-
-                    const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
-                    MessengerChatManager.sendMessage(senderId, fulfillmentMessages).then((response) => {
-                        console.log('MESSAGE SENT');
-                        console.log(response);
-                    }).catch((error) => {
-                        console.log('MESSAGE NOT SENT');
-                        console.log(error);
-                    });
-
-                }).catch((error) => {
-                    console.log('MESSAGE NOT READ');
-                    console.log(error);
-                });
+                await MessengerChatManager.sendMessage(senderId, fulfillmentMessages);
+                console.log('3');
             });
         } catch (exception) {
             console.log('Message Error');

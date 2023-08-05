@@ -13,7 +13,7 @@ module.exports = class ChatManager {
 
     // TODO: Implement language switch w/ knowledge base
     async readMessage(userId, message) {
-        return EnglishIntentMatcher.detectIntent(userId, message);
+        return await EnglishIntentMatcher.detectIntent(userId, message);
     };
 
     async sendMessage(userId, messages) {
