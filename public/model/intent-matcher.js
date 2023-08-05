@@ -27,9 +27,6 @@ module.exports = class IntentMatcher {
                 analyzeQueryTextSentiment: true,
             },
         };
-        console.log(this.sessionClient);
-        const detected = await this.sessionClient.detectIntent(request);
-        console.log(detected);
-        return detected;
+        return await this.sessionClient.detectIntent(request);
     }
 }
