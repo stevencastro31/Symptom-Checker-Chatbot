@@ -28,6 +28,8 @@ module.exports = class IntentMatcher {
             },
         };
         console.log(this.sessionClient);
-        return await this.sessionClient.detectIntent(request);
+        const detected = await this.sessionClient.detectIntent(request);
+        console.log(detected);
+        return detected;
     }
 }
