@@ -7,6 +7,7 @@ const MessengerChatManager = new ChatManager();
 
 // * Verifies new webhook URLs set in the Meta App Dashboard 
 router.get('/', async (req, res) => {
+    console.log(process.env.VERIFY_TOKEN);
     if (req.query['hub.mode'] === 'subscribe' && req.query['hub.verify_token'] === process.env.VERIFY_TOKEN) {
         console.log('> Verifying Webhook');
         res.status(200).send(req.query['hub.challenge']);
