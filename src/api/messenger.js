@@ -29,14 +29,10 @@ router.post('/', async (req, res) => {
                 const senderId = message.sender.id;
                 const messageText = message.message.text;
 
-                console.log('1');
                 const response = await MessengerChatManager.readMessage(senderId, messageText)
                 const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
-                console.log('2');
-                console.log(fulfillmentMessages);
 
                 await MessengerChatManager.sendMessage(senderId, fulfillmentMessages);
-                console.log('3');
             });
         } catch (exception) {
             console.log('Message Error');
