@@ -1,21 +1,15 @@
 const express = require('express');
 
-const emojis = require('./emojis');
+const dialogflow = require('./dialogflow');
+const messenger = require('./messenger');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.json({
-    message: 'API - 👋🌎🌍🌏',
-  });
+    res.json(['Webhook']);
 });
 
-router.get('/hotdog', (req, res) => {
-  res.json({
-    message: 'API - HOTDOG',
-  });
-});
-
-router.use('/emojis', emojis);
+router.use('/dialogflow', dialogflow);
+router.use('/messenger', messenger);
 
 module.exports = router;
