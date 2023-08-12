@@ -29,6 +29,9 @@ module.exports = class IntentManager {
             const request = {
                 name: intentId,
             };
+            if (request.name === null) {
+                return;
+            }
             const response = await this.intentClient.deleteIntent(request);
             console.log(`Deleted Intent: ${intent.displayName}`);
         } else {
@@ -55,7 +58,6 @@ module.exports = class IntentManager {
             response.every(intentData =>  {
                 if (intentData.displayName === displayName) {
                     intentId = intentData.name;
-                    console.log(intentId);
                     return false;
                 } else {
                     return true;
@@ -71,25 +73,3 @@ module.exports = class IntentManager {
         return this.intentClient.projectAgentSessionContextPath(this.projectId, 'token', '{CONTEXT}');
     };
 };
-
-
-const getIntentID = async (inputName) => {
-	var agentPath = intentClient.projectAgentPath(PROJECTID);
-
-	var req = {
-		parent: agentPath
-	}
-
-	var [res] = await intentClient.listIntents(req);
-	var intentID = [];
-
-	res.every(intent => {
-		if (inputName === intent.displayName) {
-			intentID.push(intent.name);
-			return false;
-		} else {
-			return true;
-		}
-	});
-	return intentID[0];
-}

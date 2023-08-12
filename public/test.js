@@ -16,18 +16,19 @@ const FilipinoIntentMatcher = new IntentMatcher(CREDENTIALS, 'tl');
 
 const intentManager = new IntentManager(JSON.parse(process.env.CREDENTIALS));
 
+
 // Build Intent Object
 // console.log(intentManager.getIntentId(intent));
 
 async function main() {
-    const intent = new Intent(data[0], null, intentManager.getProjectAgentSessionContextPathTemplate());
+    var intent = new Intent(data[3], null, intentManager.getProjectAgentSessionContextPathTemplate());
+    await intentManager.deleteIntent(intent);
+    await intentManager.createIntent(intent);
 
     // console.log(intent.buildIntentRequest());
     // return;
 
-
-    const res = await EnglishIntentMatcher.detectIntent(123, 'testing');
-
+    // const res = await EnglishIntentMatcher.detectIntent(123, 'testing');
     // await intentManager.deleteIntent(intent);
     // await intentManager.createIntent(intent);
 };

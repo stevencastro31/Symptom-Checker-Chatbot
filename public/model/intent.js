@@ -9,13 +9,15 @@ module.exports = class Intent {
                 outputContext: ',',
                 parameters: ',',
                 events: ',',
+                prompts: ',',
             };
         } else {
             this.delimiters = delimiters;
         }
 
         this.displayName = formatIntentName(intentJson.intentName);
-        this.parameters = formatParameters(intentJson.parameters, this.delimiters.parameters);
+        this.prompts = formatPrompts(intentJson.prompts, this.delimiters.prompts);
+        this.parameters = formatParameters(intentJson.parameters, this.delimiters.parameters, this.prompts);
         this.trainingPhrases = formatTrainingPhrases(intentJson.trainingPhrases, this.delimiters.trainingPhrases);
         this.messages = formatResponsePhrases(intentJson.responsePhrases, this.delimiters.responsePhrases);
         this.contextPathTemplate = contextPathTemplate;
@@ -157,25 +159,37 @@ function formatOutputContext(outputContext, delimiter, contextPathTemplate) {
     return formattedOutputContext;
 };
 
-function formatParameters(parameters, delimiter) {
-    // * Parameter Format { (type).(name):(isMandatory) } Ex. sys.name:1
+function formatParameters(parameters, delimiter, prompts) {
+    // // * Parameter Format { (type).(name):(isMandatory) } Ex. sys.name:1
+    // * Parameter Format { @(entity_type).(name):$(value):(isMandatory):(isList) } Ex. sys.name:$sys_name:1:0
+    // *                  { @(entity_type).(name):#(context).(value):(isMandatory):(isList) } Ex. sys.name:$sys_name:1:0
+    
+    // * Prompts Format   { @(entity_type):(prompt 1), prompt(2)... }
+
     const formattedParameters = [];
+    
     if (parameters) {
         parameters = parameters.replace(/\s/g, "").split(delimiter);
         parameters.forEach(parameter => {
-            try {
-                const parameterName = parameter.split(':')[0];
-                const parameterIsMandatory = parameter.split(':')[1] === '1';
-                
-                // TODO: Implement Custom Prompts per Intent
-                // ! Display Name may affect Dialogflow Fullfilment Investigate Further
-                const part = {
-                    displayName: parameterName.replace('.', '_'),
-                    mandatory: parameterIsMandatory,
-                    entityTypeDisplayName: `@${parameterName}`,
-                    prompts: [`I'm sorry, I did not quite get that...`]
-                };
+            parameter = parameter.replace('{', '');
+            parameter = parameter.replace('}', '');
 
+            try {
+                const parameterData = parameter.split(':');
+                const parameterName = parameterData[0];
+                const parameterValue = parameterData[1];
+                const parameterIsMandatory = parameterData[2] === '1';
+                const parameterIsList = parameterData[3] === '1';
+
+                // TODO: Implement Custom Prompts per Intent
+                const part = {
+                    displayName: parameterName.replace('@', '').replace('.', '_'),
+                    entityTypeDisplayName: parameterName,
+                    value: parameterValue,
+                    mandatory: parameterIsMandatory,
+                    isList: parameterIsList,
+                    prompts: (prompts[parameterName]) ? (prompts[parameterName]) : ([`I'm sorry, I did not quite get that...`]),
+                };
                 formattedParameters.push(part);
             } catch (exception) {
                 console.log('Parameter Error: Defined Parameter has Invalid Format');
@@ -214,7 +228,34 @@ function formatLanguageCode(languageCode) {
     } else {
         return 'en';
     }
-}
+};
+
+function formatPrompts(prompts, delimiter) {
+    // * Prompts Format   { @(entity_type):{prompt 1}{prompt(2)}... }
+
+    const promptJson = {};
+    prompts = prompts.split(delimiter);
+
+    if (prompts) {
+        prompts.forEach(prompt => {
+            prompt = prompt.substring(1, prompt.length - 1);
+            prompt = prompt.replace('}{', BLOCK);
+            prompt = prompt.replace('{', BLOCK);
+            prompt = prompt.replace('}', BLOCK);
+
+            const promptData = prompt.split(':');
+            try {
+                const promptName = promptData[0];
+                const promptPhrases = promptData[1].split(BLOCK).filter(phrase => { return phrase });
+                promptJson[promptName] = promptPhrases;
+
+            } catch (exeception) {
+                console.log('Prompt Error: Defined Prompt has Invalid Format');
+            };
+        });
+    }
+    return promptJson;
+};
 
 /*
     ? Add Support for Priority Property
