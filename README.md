@@ -1,1 +1,0 @@
-Production: https://symptom-checker-chatbot.vercel.app

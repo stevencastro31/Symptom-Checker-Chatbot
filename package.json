@@ -1,39 +1,28 @@
 {
-  "name": "express-api-starter",
-  "version": "1.2.0",
-  "description": "A basic starter for an express.js API",
+  "name": "test-app",
+  "version": "1.0.0",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "nodemon src/index.js",
-    "lint": "eslint --fix src",
-    "test": "jest",
-    "vercel-build": "echo vercel"
+    "build": "tsc && tsc-alias",
+    "start": "node dist/index.js",
+    "test": "node dist/test.js",
+    "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/index.js\""
   },
-  "keywords": [],
-  "author": "CJ R. <cj@null.computer> (https://w3cj.now.sh)",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/w3cj/express-api-starter.git"
-  },
-  "license": "MIT",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "@google-cloud/dialogflow": "^5.9.0",
-    "axios": "^1.4.0",
-    "cors": "^2.8.5",
-    "dialogflow-fulfillment": "^0.6.1",
-    "dotenv": "^16.1.4",
+    "@google-cloud/dialogflow": "^6.1.0",
+    "axios": "^1.5.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "helmet": "^7.0.0",
-    "morgan": "^1.10.0",
+    "nodemon": "^3.0.1",
+    "tsc-alias": "^1.8.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "eslint": "^8.42.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.27.5",
-    "jest": "^29.5.0",
-    "nodemon": "^2.0.22",
-    "supertest": "^6.3.3"
+    "@types/express": "^4.17.17",
+    "@types/node": "^20.6.0",
+    "typescript": "^5.2.2"
   }
 }
