@@ -1,5 +1,9 @@
 import Dialogflow from '@google-cloud/dialogflow';
+import dotenv from 'dotenv';
+dotenv.config();
 const { SessionsClient } = Dialogflow.v2;
+
+const credential: any = JSON.parse(process.env.SERVICE_ACCOUNT ?? "");
 
 class IntentMatcher {
     projectId:string ;
@@ -7,13 +11,10 @@ class IntentMatcher {
     languageCode: string;
     sessionClient: any;
 
-    constructor(credentials: any, languageCode: string) {
-        this.projectId = credentials.project_id;
+    constructor(languageCode: string) {
+        this.projectId = credential.project_id;
         this.configuration = {
-            credentials: {
-                private_key: credentials['private_key'],
-                client_email: credentials['client_email']	
-            }
+            credentials: credential,
         }
         this.languageCode = languageCode;
         this.sessionClient = new SessionsClient(this.configuration);
@@ -33,7 +34,7 @@ class IntentMatcher {
                 analyzeQueryTextSentiment: true,
             },
         };
-        return await this.sessionClient.detectIntent(request);
+        return this.sessionClient.detectIntent(request);
     }
 }
 

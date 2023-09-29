@@ -3,9 +3,8 @@ import axios from "axios";
 import dotenv from 'dotenv';
 dotenv.config();
 
-const credentials = JSON.parse(process.env.CREDENTIALS ?? '');
-const EnglishIntentMatcher = new IntentMatcher(credentials, 'en');
-const FilipinoIntentMatcher = new IntentMatcher(credentials, 'tl');
+const EnglishIntentMatcher = new IntentMatcher('en');
+const FilipinoIntentMatcher = new IntentMatcher('tl');
 
 class ChatManager { 
     type: string;
@@ -16,7 +15,7 @@ class ChatManager {
 
     // TODO: Implement language switch w/ knowledge base
     async readMessage(userId: string, message: string) {
-        return await EnglishIntentMatcher.detectIntent(userId, message);
+        return EnglishIntentMatcher.detectIntent(userId, message);
     };
 
     async sendMessage(userId: string, messages: Object[]) {

@@ -1,19 +1,20 @@
 import Dialogflow from '@google-cloud/dialogflow';
 import Intent from '@libs/intent';
+import dotenv from 'dotenv';
+dotenv.config();
 const { IntentsClient, } = Dialogflow.v2;
+
+const credential: any = JSON.parse(process.env.SERVICE_ACCOUNT ?? "");
 
 class IntentManager {
     projectId: string;
     configuration: any;
     intentClient: any;
 
-    constructor(credentials: any) {
-        this.projectId = credentials.project_id;
+    constructor() {
+        this.projectId = credential.project_id;
         this.configuration = {
-            credentials: {
-                private_key: credentials['private_key'],
-                client_email: credentials['client_email']	
-            }
+            credentials: credential,
         }
         this.intentClient = new IntentsClient(this.configuration);
     };

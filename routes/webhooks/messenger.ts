@@ -27,7 +27,7 @@ router.post('/webhook/ms', async (req: Request, res: Response) => {
                 const senderId = message.sender.id;
                 const messageText = message.message.text;
 
-                const response = await MessengerChatManager.readMessage(senderId, messageText)
+                const response = await MessengerChatManager.readMessage(senderId, messageText);
                 const fulfillmentMessages = response[0].queryResult.fulfillmentMessages;
 
                 await MessengerChatManager.sendMessage(senderId, fulfillmentMessages);
