@@ -19,6 +19,7 @@ class Intent {
     isFallback: boolean;
     events: Object[];
     languageCode: string;
+    action: string;
 
     constructor(intentJson: any, delimiters: any, contextPathTemplate: string) {
         if (delimiters === undefined || delimiters === null) {
@@ -48,6 +49,7 @@ class Intent {
         this.isFallback = formatFallbackState(intentJson.isFallback);
         this.events = formatEvents(intentJson.events, this.delimiters.events);
         this.languageCode = formatLanguageCode(intentJson.languageCode);
+        this.action = formatAction(intentJson.action);
     };
 
     buildIntentRequest(agentPath: string) {
@@ -63,6 +65,7 @@ class Intent {
                 isFallback: this.isFallback,
                 parameters: this.parameters,
                 events: this.events,
+                action: this.action,
             },
             languageCode: this.languageCode,
         };
@@ -256,9 +259,9 @@ function formatPrompts(prompts: any, delimiter: string): any {
     // * Prompts Format   { @(entity_type):{prompt 1}{prompt(2)}... }
 
     const promptJson: any = {};
-    prompts = prompts.split(delimiter);
-
+    
     if (prompts) {
+        prompts = prompts.split(delimiter);
         prompts.forEach((prompt: string) => {
             prompt = prompt.substring(1, prompt.length - 1);
             prompt = prompt.replace('}{', BLOCK);
@@ -273,10 +276,15 @@ function formatPrompts(prompts: any, delimiter: string): any {
 
             } catch (exeception) {
                 console.log('Prompt Error: Defined Prompt has Invalid Format');
+                console.log(prompts);
             };
         });
     }
     return promptJson;
+};
+
+function formatAction(action: string): string {
+    return action;
 };
 
 export default Intent;

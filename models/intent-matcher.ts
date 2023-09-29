@@ -1,8 +1,8 @@
 import Dialogflow from '@google-cloud/dialogflow';
 import dotenv from 'dotenv';
 dotenv.config();
-const { SessionsClient } = Dialogflow.v2;
 
+const { SessionsClient } = Dialogflow.v2;
 const credential: any = JSON.parse(process.env.SERVICE_ACCOUNT ?? "");
 
 class IntentMatcher {
