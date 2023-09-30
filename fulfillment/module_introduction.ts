@@ -26,8 +26,13 @@ const module_functions = {
             response = response.concat(await getChatResponse(module_name, ChatIntent.PRIVACY_POLICY, session.language));
 
         } else {
-            response.push('Great! How can I help you?');
+            if (session.checkup) {
+                triggerEvent(agent, 'GENERAL');
+                
+            } else {
+                response = response.concat(await getChatResponse(module_name, ChatIntent.HELP, session.language));
 
+            }
         }
 
         agent.context.set({name: 'SESSION', lifespan: 99, parameters: session});
@@ -35,7 +40,25 @@ const module_functions = {
     },
 
     checkup: async (agent: any) => {
+        const session = getSession(agent);
+        const userid = getUserFacebookID(agent);    
+        const user: any = await getUser(userid);
+        let response: string[] = [];
 
+        session.language = user.settings.language ?? ChatLanguage.ENGLISH;
+        session.user = userid;
+
+        if (!user.settings.language || !user.settings.privacy_policy) {
+            session.checkup = true;
+        
+            triggerEvent(agent, 'GREETING');
+        } else {
+            triggerEvent(agent, 'GENERAL');
+
+        }
+
+        agent.context.set({name: 'SESSION', lifespan: 99, parameters: session});
+        response.forEach((message: string) => { agent.add(message); });
     },
 
     privacy_policy_yes: async (agent: any) => {
@@ -86,8 +109,8 @@ const module_functions = {
             user.settings.language = agent.parameters.language;
 
             agent.context.set({name: 'LANGUAGE', lifespan: 0});
-            triggerEvent(agent, 'GREETING');
 
+            triggerEvent(agent, 'GREETING');
             await setUser(session.user, user);
         }
 
@@ -110,8 +133,8 @@ const module_functions = {
 
             response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_CHANGE_SUCCESS, session.language));
             agent.context.set({name: 'LANGUAGE', lifespan: 0});
-            triggerEvent(agent, 'GREETING');
 
+            triggerEvent(agent, 'GREETING');
             await setUser(session.user, user);
         } else {
             agent.context.set({name: 'LANGUAGE', lifespan: 5});
