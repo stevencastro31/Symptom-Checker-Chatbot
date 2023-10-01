@@ -9,7 +9,9 @@ export enum ChatIntent {
     LANGUAGE_CHANGE_SUCCESS = 'language_change_success',
     HELP = 'help',
 
+    GENERAL = 'general',
     NAME_SET = 'name_set',
     AGE_SET = 'age_set',
     SEX_SET = 'sex_set',
+    INITIAL_SYMPTOM = 'initial_symptom_set',
 };

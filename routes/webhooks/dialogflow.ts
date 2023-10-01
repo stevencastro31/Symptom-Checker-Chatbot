@@ -1,6 +1,7 @@
 import express, { Express, Request, Response, Router } from 'express';
 import { WebhookClient } from 'dialogflow-fulfillment';
-import module_introduction  from '@fulfillment/module_introduction';
+import module_introduction from '@fulfillment/module_introduction';
+import module_general from '@fulfillment/module_general_questions';
 import { ChatIntent } from 'enums/intent';
 
 const router: Router = express.Router();
@@ -24,6 +25,11 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.PRIVACY_POLICY_NO, module_introduction.privacy_policy_no);
     handlers.set(ChatIntent.LANGUAGE_SET, module_introduction.language_set);
     handlers.set(ChatIntent.LANGUAGE_CHANGE, module_introduction.language_change);
+
+    handlers.set(ChatIntent.GENERAL, module_general.general);
+    handlers.set(ChatIntent.NAME_SET, module_general.name_set);
+    handlers.set(ChatIntent.AGE_SET, module_general.age_set);
+    handlers.set(ChatIntent.SEX_SET, module_general.sex_set);
 
     try {
         agent.handleRequest(handlers);

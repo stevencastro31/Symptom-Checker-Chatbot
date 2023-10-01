@@ -12,15 +12,15 @@ const module_functions = {
         let response: string[] = [];
 
         if (!user.general.name) {
-            agent.context.set({name: 'NAME', lifespan: 3});
+            agent.context.set({name: 'NAME', lifespan: 5});
             response = response.concat(await getChatResponse(module_name, ChatIntent.NAME_SET, session.language));
 
         } else if (!user.general.sex) {
-            agent.context.set({name: 'SEX', lifespan: 3});
+            agent.context.set({name: 'SEX', lifespan: 5});
             response = response.concat(await getChatResponse(module_name, ChatIntent.SEX_SET, session.language));
 
         } else if (!user.general.age) {
-            agent.context.set({name: 'AGE', lifespan: 3});
+            agent.context.set({name: 'AGE', lifespan: 5});
             response = response.concat(await getChatResponse(module_name, ChatIntent.AGE_SET, session.language));
 
         } else {
@@ -28,7 +28,9 @@ const module_functions = {
             session.age = user.general.age;
             session.sex = user.general.sex;
 
-            response = response.concat(await getChatResponse(module_name, ChatIntent.INITIAL_SYMPTOM, session.language));
+            // TODO: Ask for FIRST
+            agent.add('WOW');
+            // response = response.concat(await getChatResponse(module_name, ChatIntent.INITIAL_SYMPTOM, session.language));
         }
 
         agent.context.set({name: 'SESSION', lifespan: 99, parameters: session});
@@ -40,12 +42,11 @@ const module_functions = {
         const user: any = await getUser(session.user);
         let response: string[] = [];
 
-        if (!agent.parameters.name) {
+        if (!agent.parameters.sys_any) {
             response = response.concat(await getChatResponse(module_name, ChatIntent.NAME_SET, session.language));
 
         } else {
-            session.name = agent.parameters.name;
-            user.general.name = agent.parameters.name;
+            user.general.name = agent.parameters.sys_any;
 
             agent.context.set({name: 'NAME', lifespan: 0});
             triggerEvent(agent, 'GENERAL');
@@ -62,12 +63,11 @@ const module_functions = {
         const user: any = await getUser(session.user);
         let response: string[] = [];
 
-        if (!agent.parameters.age) {
+        if (!agent.parameters.sys_age) {
             response = response.concat(await getChatResponse(module_name, ChatIntent.AGE_SET, session.language));
 
         } else {
-            session.age = agent.parameters.age;
-            user.general.age = agent.parameters.age;
+            user.general.age = agent.parameters.sys_age;
 
             agent.context.set({name: 'AGE', lifespan: 0});
             triggerEvent(agent, 'GENERAL');
@@ -88,7 +88,6 @@ const module_functions = {
             response = response.concat(await getChatResponse(module_name, ChatIntent.SEX_SET, session.language));
 
         } else {
-            session.sex = agent.parameters.sex;
             user.general.sex = agent.parameters.sex;
 
             agent.context.set({name: 'SEX', lifespan: 0});

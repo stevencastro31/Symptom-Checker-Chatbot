@@ -31,30 +31,30 @@ const delimiters = {
 };
 
 async function main() {
-    // for (let i = 7; i < 8; i++) {
-    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-    //     await intentManager.deleteIntent(intent);
-    //     await intentManager.createIntent(intent);
-    // }
+    for (let i = 14 - 2; i < 16; i++) {
+        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+        await intentManager.deleteIntent(intent);
+        await intentManager.createIntent(intent);
+    }
 
-    const user = {
-        date_created: firebase.firestore.FieldValue.serverTimestamp(),
-        current_session: 'session_id',
-        general: { name: 'John', age: 19, sex: 'male' },
-        settings: { language: 'english', privacy_policy: true },
-        sessions: [
-            'DocumentReference',
-            'DocumentReference'
-        ],
-    };
+    // const user = {
+    //     date_created: firebase.firestore.FieldValue.serverTimestamp(),
+    //     current_session: 'session_id',
+    //     general: { name: 'John', age: 19, sex: 'male' },
+    //     settings: { language: 'english', privacy_policy: true },
+    //     sessions: [
+    //         'DocumentReference',
+    //         'DocumentReference'
+    //     ],
+    // };
 
-    let data: any = await getUser("123456789");
-    console.log(data);
+    // let data: any = await getUser("123456789");
+    // console.log(data);
 
-    data = await getUser("123456789123");
-    console.log(data);
+    // data = await getUser("123456789123");
+    // console.log(data);
 
-    console.log(data.settings.language ?? ChatLanguage.ENGLISH);
+    // console.log(data.settings.language ?? ChatLanguage.ENGLISH);
 
 
     // console.log(await setUser("1234567891", user));
