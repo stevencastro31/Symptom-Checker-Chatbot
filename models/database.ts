@@ -22,7 +22,6 @@ const new_user_obj = {
         privacy_policy: false,
     },
     sessions: [],
-    is_new: true,   
 };
 
 // * Fetches a variant of a chatbot response from Firestore.
@@ -68,7 +67,17 @@ async function setUser(userid: string, data: Object) {
     };
 };
 
-export { getChatResponse, getUser, setUser }
+// * Updates a Field in User Object
+async function updateField(userid: string, data: any) {
+    try {
+        const res = await database.collection('users').doc(userid).update(data);
+        // console.log(`User [${userid}]: ${res.writeTime}`);
+    } catch (err) {
+        console.log(err);
+    };  
+}
+
+export { getChatResponse, getUser, setUser, updateField }
 
 
 

@@ -31,7 +31,8 @@ class ChatManager {
 					},
 					message: {
 						text: text
-					}
+					},
+                    quick_replies: []
 				}).catch((error: any) => {
 					console.log('Sending Message Error');
 				});
