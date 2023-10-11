@@ -13,5 +13,7 @@ export enum ChatIntent {
     NAME_SET = 'name_set',
     AGE_SET = 'age_set',
     SEX_SET = 'sex_set',
-    INITIAL_SYMPTOM = 'initial_symptom_set',
+
+    ELICITATION = 'elicitation',
+    INITIAL_SYMPTOM_SET = 'initial_symptom_set',
 };

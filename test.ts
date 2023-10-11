@@ -28,13 +28,16 @@ const delimiters = {
 
 async function main() {
 
-    await setDialogues();
+    // await setDialogues();
 
-    // for (let i = 7; i < 8; i++) {
-    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-    //     await intentManager.deleteIntent(intent);
-    //     await intentManager.createIntent(intent);
-    // }
+    const start = 16;
+    const end = 19;
+
+    for (let i = start -2; i < end -1; i++) {
+        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+        await intentManager.deleteIntent(intent);
+        await intentManager.createIntent(intent);
+    }
 
     // const response = await getChatResponse(ChatModul e.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
 
