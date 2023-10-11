@@ -2,6 +2,7 @@ import express, { Express, Request, Response, Router } from 'express';
 import { WebhookClient } from 'dialogflow-fulfillment';
 import module_introduction from '@fulfillment/module_introduction';
 import module_general from '@fulfillment/module_general_questions';
+import module_symptom_elicitation from '@fulfillment/module_symptom_elicitation';
 import { ChatIntent } from 'enums/intent';
 import { webhook } from '@fulfillment/webhook';
 
@@ -31,6 +32,9 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.NAME_SET, module_general.name_set);
     handlers.set(ChatIntent.AGE_SET, module_general.age_set);
     handlers.set(ChatIntent.SEX_SET, module_general.sex_set);
+
+    handlers.set(ChatIntent.ELICITATION, module_symptom_elicitation.elicitation);
+    handlers.set(ChatIntent.INITIAL_SYMPTOM_SET, module_symptom_elicitation.initial_symptom_set);
 
     // Test Intent
     handlers.set('webhook', webhook);

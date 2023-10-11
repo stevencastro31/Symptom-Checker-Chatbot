@@ -20,11 +20,11 @@ class ChatManager {
         return EnglishIntentMatcher.detectIntent(userId, message);
     };
 
-    // TODO: Messenges Sent sometimes are not in proper order. (Make Own Promise?)
     async sendMessage(userId: string, messages: Object[]) {
         const accessToken = process.env.PAGE_ACCESS_TOKEN;
 
-        messages.forEach(async (message: any) => {
+        for (let i = 0; i < messages.length; i++) {
+            const message: any = messages[i];
             const reply: any = {}
 
             if (message.message === 'text') {
@@ -45,7 +45,7 @@ class ChatManager {
 				}).catch((error: any) => {
 					console.log('Sending Message Error');
 				});
-        });
+        };
     };
 };
 
