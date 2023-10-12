@@ -9,29 +9,30 @@ firebase.initializeApp({
 });
 const database = firebase.firestore();
 
-
 const loader = new ExcelLoader();
 
-// update symptoms module
-async function setSymptom(symptomid: string, data: Object) {
+// update firestore
+async function updateFirestore(collectionid: string, symptomid: string, data: Object) {
     try {
-        const res = await database.collection('module_symptoms').doc(symptomid).set(data);
+        const res = await database.collection(collectionid).doc(symptomid).set(data);
     } catch (err) {
         console.log(err);
     };
 };
 
-// get value from excel file
-async function setDialogues() {
-    const data: Object[] = loader.loadExcelSheet('symptoms-module-dialogues.xlsx', 'Symptoms'); // for latest version of the file, export xlsx file from google sheets and use here
+// questions bank
+async function setSymptomElicitationDialogues() {
+    const data: Object[] = loader.loadExcelSheet('./extra/symptoms-modules.xlsx', 'Symptom Elicitation Dialogues'); // for latest version of the file, export xlsx file from google sheets and use here
     const symptoms: string[] = [];
     const groupedModules: { [key: string]: typeof data } = {};
     data.forEach((item: any) => {
-        if (!groupedModules[item.module]) {
-            symptoms.push(item.module);
-            groupedModules[item.module] = [];
+        if (!groupedModules[item.document] && item.document) {
+            symptoms.push(item.document);
+            groupedModules[item.document] = [];
         }
-        groupedModules[item.module].push(item);
+        if (item.document) {
+            groupedModules[item.document].push(item);
+        }
     });
     // iterate through all symptoms
     for (const symptom of symptoms) {
@@ -45,11 +46,63 @@ async function setDialogues() {
                     dialogue[key] = row[key].split('|');
                 }
             }
-            document[row.document] = dialogue;
+            document[row.question] = dialogue;
         });
         // add to firestore
-        await setSymptom(symptom, document);
+        await updateFirestore('module_symptom_elicitation', symptom, document);
     }
 };
 
-export { setDialogues };
+// knowledge base
+async function setSymptomsKnowledgeBase() {
+    const data: any[] = loader.loadExcelSheet('./extra/symptoms-modules.xlsx', 'Symptom Knowledge Base'); // for latest version of the file, export xlsx file from google sheets and use here
+    const propertyCount = 8;
+
+    for (const item of data) {
+        const questions: string[] = [];
+        let document: any = {};
+        for (let i = 1; i <= propertyCount; i++) {
+            const propertyName = `property${i}`;
+
+            if(item.hasOwnProperty(propertyName) && item[propertyName]) {
+                questions.push(item[propertyName]);
+            }
+            else {  // break loop if the property is empty
+                break;
+            }
+        }
+
+        document = {
+            questions: questions
+        }
+        // add to firestore
+        await updateFirestore('knowledge_base', item.symptom, document);
+    }
+};
+
+// quick replies
+async function setPropertyQuickReply() {
+    const data: any[] = loader.loadExcelSheet('./extra/symptoms-modules.xlsx', 'Property Quick Reply'); // for latest version of the file, export xlsx file from google sheets and use here
+
+    data.forEach(async (row: any) => {
+        const dialogue: any = {};
+
+        for (const key in row) {
+            // dont include those with empty values
+            if ((key.startsWith('english') || key.startsWith('tagalog')) && row[key]) {
+                dialogue[key] = row[key].split('|');
+            }
+        }
+        // add to firestore
+        await updateFirestore('module_property_reply', row.property, dialogue);
+    });
+
+}
+
+async function setData() {
+    // await setSymptomElicitationDialogues();
+    // await setSymptomsKnowledgeBase();
+    // await setPropertyQuickReply();
+}
+
+export { setData };

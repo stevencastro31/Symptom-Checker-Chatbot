@@ -9,7 +9,7 @@ import { ChatModule } from 'enums/module';
 import { ChatLanguage } from 'enums/language';
 import { ChatIntent } from 'enums/intent';
 
-import { setDialogues } from 'extra/symptom-dialogue';
+import { setData } from 'extra/symptom-dialogue';
 
 const loader = new ExcelLoader();
 
@@ -28,16 +28,16 @@ const delimiters = {
 
 async function main() {
 
-    // await setDialogues();
+    await setData();
 
-    const start = 16;
-    const end = 19;
+    // const start = 16;
+    // const end = 19;
 
-    for (let i = start -2; i < end -1; i++) {
-        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-        await intentManager.deleteIntent(intent);
-        await intentManager.createIntent(intent);
-    }
+    // for (let i = start -2; i < end -1; i++) {
+    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+    //     await intentManager.deleteIntent(intent);
+    //     await intentManager.createIntent(intent);
+    // }
 
     // const response = await getChatResponse(ChatModul e.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
 
