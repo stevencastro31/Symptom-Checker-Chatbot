@@ -27,11 +27,8 @@ const delimiters = {
 };
 
 async function main() {
-
-    // await setDialogues();
-
-    const start = 16;
-    const end = 19;
+    const start = 54;
+    const end = 60;
 
     for (let i = start -2; i < end -1; i++) {
         var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
@@ -39,9 +36,9 @@ async function main() {
         await intentManager.createIntent(intent);
     }
 
+    // await setDialogues();
     // const response = await getChatResponse(ChatModul e.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
-
-    // console.log(response);
+    // console.log(response);       
 };
 
 main();

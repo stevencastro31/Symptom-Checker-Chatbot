@@ -26,10 +26,19 @@ async function webhook(agent: any) {
     // agent.add('COOL!');
 };
 
-export { webhook }
+async function set_context(agent: any) {
+    agent.add('Context Set');
+    agent.context.set({name: agent.parameters.sys_any, lifespan: 5});
+};
+
+async function jump_flow(agent: any) {
+    agent.add('Jump Set');
+    // TODO: JUMP TO SYMPTOM FLOW
+};
+
+export { webhook, set_context, jump_flow }
 
 // INTENT CHAINING ONLY HAS A MAX OF 3
-
 
 // {
 //     "content_type":"text",

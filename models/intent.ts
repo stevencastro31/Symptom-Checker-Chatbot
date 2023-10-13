@@ -107,7 +107,7 @@ function formatTrainingPhrases(trainingPhrases: any, delimiter: string): Object[
                            const part: any = {
                             text: entityData[1],
                             entityType: `@${entityData[0]}`,
-                            alias: entityData[0].replace('.', '_'),
+                            alias: entityData[0].replace('.', '_').replace('-', '_'),
                             userDefined: true
                         };
                         trainingPhrase.parts.push(part);
@@ -208,7 +208,7 @@ function formatParameters(parameters: any, delimiter: string, prompts: string[])
 
                 // TODO: Implement Custom Prompts per Intent
                 const part = {
-                    displayName: parameterName.replace('@', '').replace('.', '_'),
+                    displayName: parameterName.replace('@', '').replace('.', '_').replace('-', '_'),
                     entityTypeDisplayName: parameterName,
                     value: parameterValue,
                     mandatory: parameterIsMandatory,
