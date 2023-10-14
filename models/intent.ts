@@ -213,7 +213,7 @@ function formatParameters(parameters: any, delimiter: string, prompts: string[])
                     value: parameterValue,
                     mandatory: parameterIsMandatory,
                     isList: parameterIsList,
-                    prompts: (prompts[parameterName]) ? (prompts[parameterName]) : ([`I'm sorry, I did not quite get that...`]),
+                    // prompts: (prompts[parameterName]) ? (prompts[parameterName]) : ([`I'm sorry, I did not quite get that...`]),
                 };
                 formattedParameters.push(part);
             } catch (exception) {

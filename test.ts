@@ -27,16 +27,16 @@ const delimiters = {
 };
 
 async function main() {
-    const start = 54;
-    const end = 60;
+    const start = 65;
+    const end = 74;
 
-    // for (let i = start -2; i < end -1; i++) {
-    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-    //     await intentManager.deleteIntent(intent);
-    //     await intentManager.createIntent(intent);
-    // }
+    for (let i = start -2; i < end -1; i++) {
+        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+        await intentManager.deleteIntent(intent);
+        await intentManager.createIntent(intent);
+    }
 
-    // const response = await getChatResponse(ChatModul e.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
+    // const response = await getChatResponse(ChatModule.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
     // console.log(response);       
 };
 

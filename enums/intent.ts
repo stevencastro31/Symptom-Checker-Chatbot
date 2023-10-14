@@ -39,4 +39,12 @@ export enum ChatIntent {
     INTERFERENCE_YES = 'inteference_yes',
     INTERFERENCE_NO = 'inteference_no',
     PARTS_DAY_SET = 'parts_day_set',
+    HEARTRATE_SET = 'heartrate_set',
+    BLOOD_PRESSURE_SET = 'blood_pressure_set',
+    TRIGGER_ACTIVITY_SET = 'trigger_activity_set',
+    TRIGGER_STATE_SET = 'trigger_state_set',
+    TRIGGER_FOOD_SET = 'trigger_food_set',
+    CHANGE_QUANTITY_SET = 'change_quantity_set',
+    CARDIOVASCULAR_SET = 'cardiovascular_set',
+    RESPIRATORY_SET = 'respiratory_set',
 };

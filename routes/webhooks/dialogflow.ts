@@ -44,6 +44,7 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.HAS_SYMPTOM_NO, module_symptom_elicitation.has_symptom_no);
     handlers.set(ChatIntent.INTERFERENCE_YES, module_symptom_elicitation.inteference_yes);
     handlers.set(ChatIntent.INTERFERENCE_NO, module_symptom_elicitation.inteference_no);
+    handlers.set(ChatIntent.CHANGE_QUANTITY_SET, module_symptom_elicitation.change_quantity_set);
 
     handlers.set(ChatIntent.DURATION_GENERIC_SET, module_symptom_elicitation.duration_generic_set);
     handlers.set(ChatIntent.DURATION_EXPLICIT_SET, module_symptom_elicitation.duration_explicit_set);
@@ -54,6 +55,8 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.WEIGHT_SET, module_symptom_elicitation.weight_set);
     handlers.set(ChatIntent.TEMPERATURE_BODY_SET, module_symptom_elicitation.temperature_body_set);
     handlers.set(ChatIntent.COLOR_PHLEGM_SET, module_symptom_elicitation.color_phlegm_set);
+    handlers.set(ChatIntent.BLOOD_PRESSURE_SET, module_symptom_elicitation.blood_pressure_set);
+    handlers.set(ChatIntent.HEARTRATE_SET, module_symptom_elicitation.heartrate_set);
 
     handlers.set(ChatIntent.PAIN_ADJECTIVES_SET, module_symptom_elicitation.pain_adjectives_set);
     handlers.set(ChatIntent.PAIN_INTENSITY_SET, module_symptom_elicitation.pain_intensity_set);
@@ -67,6 +70,13 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.MOISTURE_SET, module_symptom_elicitation.moisture_set);
     handlers.set(ChatIntent.PHYSICAL_STATE_SET, module_symptom_elicitation.physical_state_set);
     handlers.set(ChatIntent.COUNT_SET, module_symptom_elicitation.count_set);
+
+    handlers.set(ChatIntent.TRIGGER_ACTIVITY_SET, module_symptom_elicitation.trigger_activity_set);
+    handlers.set(ChatIntent.TRIGGER_STATE_SET, module_symptom_elicitation.trigger_state_set);
+    handlers.set(ChatIntent.TRIGGER_FOOD_SET, module_symptom_elicitation.trigger_food_set);
+
+    handlers.set(ChatIntent.RESPIRATORY_SET, module_symptom_elicitation.respiratory_set);
+    handlers.set(ChatIntent.CARDIOVASCULAR_SET, module_symptom_elicitation.cardiovascular_set);
 
     // Test Intents
     handlers.set('webhook', webhook);

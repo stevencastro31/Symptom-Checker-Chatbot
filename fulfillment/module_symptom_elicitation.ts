@@ -121,6 +121,37 @@ const module_functions = {
         agent.add('X');
     },
 
+    heartrate_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    blood_pressure_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    trigger_activity_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    trigger_state_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    trigger_food_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    change_quantity_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    cardiovascular_set: async (agent: any) => {
+        agent.add('X');
+    },
+
+    respiratory_set: async (agent: any) => {
+        agent.add('X');
+    },    
 };
 
 async function symptom_elicitation_flow(agent: any, session: any) {
