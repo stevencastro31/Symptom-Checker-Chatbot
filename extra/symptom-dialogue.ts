@@ -34,23 +34,34 @@ async function setSymptomElicitationDialogues() {
             groupedModules[item.document].push(item);
         }
     });
+
     // iterate through all symptoms
     for (const symptom of symptoms) {
         const document: any = {};
 
         groupedModules[symptom].forEach(async (row: any) => {
-            const dialogue: any = {};
+
             for (const key in row) {
                 // dont include those with empty values
                 if ((key.startsWith('english') || key.startsWith('tagalog')) && row[key]) {
-                    dialogue[key] = row[key].split('|');
+                    const language = key;
+
+                    if (!document[language]) {
+                        document[language] = {};
+                    }
+
+                    if (!document[language][row.question]) {
+                        document[language][row.question] = [];
+                    }
+                    
+                    document[language][row.question] = row[key].split('|');
                 }
             }
-            document[row.question] = dialogue;
         });
         // add to firestore
-        await updateFirestore('module_symptom_elicitation', symptom, document);
+       await updateFirestore('module_symptom_elicitation', symptom, document);
     }
+    
 };
 
 // knowledge base
