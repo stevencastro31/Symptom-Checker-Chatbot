@@ -29,10 +29,24 @@ async function getChatResponse(module: ChatModule, document: ChatIntent, languag
     try {
         const doc = await database.collection(module).doc(document).get();
         const data = doc.data();
-        const variant = Math.floor(Math.random() * 2) + 1;
+        // const variant = Math.floor(Math.random() * 2) + 1; // ! Change back when KB is filled
+        const variant = 1;
 
         // console.log(`Using ${language}-${variant}`, data);
         if (data) { return data[`${language}-${variant}`]; }
+    } catch (err) {
+        console.log(err);
+    };
+    return ['Please notify the devs that an error has occured from the backend when retrieving a response.', ':<'];
+};
+
+// * Fetches quick replies for certain question types.
+async function getChatReply(reply: string, language: ChatLanguage) {
+    try {
+        const doc = await database.collection(ChatModule.PROPERTY_REPLY).doc(reply).get();
+        const data = doc.data();
+
+        if (data) { return data[language]; }
     } catch (err) {
         console.log(err);
     };
@@ -77,7 +91,19 @@ async function updateField(userid: string, data: any) {
     };  
 }
 
-export { getChatResponse, getUser, setUser, updateField }
+// * Fetch Symptom Object
+async function getSymptomKnowledge(symptom: string) {
+    try {
+        const doc = await database.collection(ChatModule.KNOWLEDGE_BASE).doc(symptom).get();
+        const data = doc.data();
+        
+        return data ? data : null;
+    } catch (err) {
+        console.log(err);
+    };
+};
+
+export { getChatResponse, getUser, setUser, updateField, getSymptomKnowledge }
 
 
 

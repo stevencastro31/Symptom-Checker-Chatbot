@@ -53,24 +53,31 @@ async function checkIntroductionFlags(session: any) {
     // Raise Flags
     session.flags.language_flag = user.settings.language === null;
     session.flags.privacy_policy_flag = user.settings.privacy_policy === false
-    // console.log('FLAGS', session.flags);
 };
 
 // * Set General Question Module Flags
 async function checkGeneralQuestionFlags(session: any) {
     const user: any = await getUser(session.userid);
 
+    // Raise Flags
     session.flags.name_flag = user.general.name === null;
     session.flags.age_flag = user.general.age === null;
     session.flags.sex_flag = user.general.sex === null;
 };
 
 // * Set Symptom Elicitation Module Flags
-// TODO: asda
 async function checkSymptomElicitationFlags(session: any) {
-    const user: any = await getUser(session.userid);
-
-    session.flags.initial_flag = true;
+    // Raise Flags
+    session.flags.initial_flag = session.flags.initial_flag ?? true;
+    session.elicitation = session.elicitation ?? {
+        current_subject: null,
+        current_properties: {},
+        current_questions: [],
+        next_subject: null,
+        symptoms: [],
+    };
+    session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && session.elicitation.next_subject !== null;
+    session.flags.end_probing_flag = 0 === session.elicitation.current_questions.length && session.elicitation.next_subject === null;
 };
 
 export { checkIntroductionFlags, checkGeneralQuestionFlags, checkSymptomElicitationFlags, triggerEvent, fullfilmentRequest, fullfilmentResponse }

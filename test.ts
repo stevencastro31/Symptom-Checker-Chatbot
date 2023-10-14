@@ -10,6 +10,7 @@ import { ChatLanguage } from 'enums/language';
 import { ChatIntent } from 'enums/intent';
 
 import { setData } from 'extra/symptom-dialogue';
+import { getSymptomKnowledge } from '@libs/database';
 
 const loader = new ExcelLoader();
 
@@ -30,12 +31,16 @@ async function main() {
     const start = 65;
     const end = 74;
 
-    for (let i = start -2; i < end -1; i++) {
-        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-        await intentManager.deleteIntent(intent);
-        await intentManager.createIntent(intent);
-    }
 
+
+    console.log(await getSymptomKnowledge('cough'));
+
+
+    // for (let i = start -2; i < end -1; i++) {
+    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+    //     await intentManager.deleteIntent(intent);
+    //     await intentManager.createIntent(intent);
+    // }
     // const response = await getChatResponse(ChatModule.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
     // console.log(response);       
 };
