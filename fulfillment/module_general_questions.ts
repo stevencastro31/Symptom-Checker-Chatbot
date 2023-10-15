@@ -1,8 +1,9 @@
-import { getChatResponse, updateField } from "@libs/database";
+import { getChatReply, getChatResponse, updateField } from "@libs/database";
 import { ChatIntent } from "enums/intent";
 import { ChatModule } from "enums/module"
 import { checkGeneralQuestionFlags, fullfilmentRequest, fullfilmentResponse, triggerEvent } from "./chatbot_functions";
 import { ChatEvent } from "enums/event";
+import { ChatQuickReply } from "enums/quick_reply";
 
 const module_name = ChatModule.GENERAL_QUESTIONS;
 const module_functions = {
@@ -62,6 +63,7 @@ const module_functions = {
 
         if (!agent.parameters.sex) {
             response = response.concat(await getChatResponse(module_name, ChatIntent.SEX_SET, session.language));
+            response = response.concat({quickReplies: await getChatReply(ChatQuickReply.SEX, session.language)});
         } 
 
         else {
@@ -96,6 +98,7 @@ async function general_questions_flow(agent: any, session: any) {
     else if (session.flags.sex_flag) {
         agent.context.set({name: 'SEX', lifespan: 5});
         response = response.concat(await getChatResponse(module_name, ChatIntent.SEX_SET, session.language));
+        response = response.concat({quickReplies: await getChatReply(ChatQuickReply.SEX, session.language)});
     }
 
     else {

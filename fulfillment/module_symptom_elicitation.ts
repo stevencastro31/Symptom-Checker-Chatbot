@@ -1,9 +1,10 @@
 import { ChatIntent } from "enums/intent";
 import { ChatModule } from "enums/module"
 import { ChatEvent } from "enums/event";
-import { getChatResponse, getSymptomKnowledge, updateField } from "@libs/database";
+import { getChatReply, getChatResponse, getSymptomKnowledge, updateField } from "@libs/database";
 import { checkSymptomElicitationFlags, fullfilmentRequest, fullfilmentResponse, triggerEvent } from "./chatbot_functions";
 import { ChatContext } from "enums/context";
+import { ChatQuickReply } from "enums/quick_reply";
 
 const module_name = ChatModule.SYMPTOM_ELICITATION;
 const module_functions = {
@@ -391,10 +392,10 @@ async function symptom_elicitation_flow(agent: any, session: any) {
     let response: any[] = [];
 
     await checkSymptomElicitationFlags(session);
-    console.log(session.flags, session.elicitation);
     if (session.flags.initial_flag) {
         agent.context.set({name: 'INITIAL', lifespan: 5});
         response = response.concat(await getChatResponse(module_name, ChatIntent.INITIAL_SYMPTOM_SET, session.language));
+        response = response.concat({quickReplies: await getChatReply(ChatQuickReply.INITIAL, session.language)});
     } 
 
     else if (session.flags.end_probing_flag) {
@@ -428,7 +429,7 @@ async function symptom_elicitation_flow(agent: any, session: any) {
             agent.context.set({name: getPropertyContext(question_type), lifespan: 5});
             const property_questions: any = await getChatResponse(module_name, session.elicitation.current_subject, session.language);
             response = response.concat(property_questions[question_type]);
-            // TODO: ADD QUICK REPLIES
+            response = response.concat({quickReplies: await getChatReply(question_type, session.language)});
         } 
         
         else {

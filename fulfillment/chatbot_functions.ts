@@ -3,7 +3,8 @@ import { Payload } from "dialogflow-fulfillment";
 import { ChatLanguage } from "enums/language";
 
 function getUserFacebookID(agent: any) {
-    return agent.session.split()[4] ?? 'dialogflow';
+    const id = agent.session.split('/')[4];
+    return 20 < id.length ? 'dialogflow' : id;
 };
 
 function getSession(agent: any) {
@@ -27,6 +28,9 @@ async function fullfilmentRequest(agent: any) {
     session.userid = session.userid ?? getUserFacebookID(agent);
     const user: any = await getUser(session.userid);
 
+    console.log('Session: ', agent.session);
+    console.log('Params: ', session);
+
     session.flags = session.flags ?? {};
     session.flags.start_flag = session.flags.start_flag === undefined;
     session.language = user.settings.language ?? ChatLanguage.ENGLISH;
@@ -36,26 +40,27 @@ async function fullfilmentRequest(agent: any) {
 
 // * Repetitive Code for Response & Saving Session Data
 async function fullfilmentResponse(agent: any, response: any[], session: any) {
+    // Save Session
     agent.context.set({name: 'SESSION', lifespan: 99, parameters: session});
 
-    // * Create a Quick Reply in the Response (Latest)
+    // Create a Quick Reply in the Response (Latest)
     const payload: any = {text: 'default', quickReplies: []};
+    var hasQuickReply = false;
     response.forEach((message: any) => {
         if (message instanceof Object) { 
             payload.quickReplies = createPayload(message.quickReplies); 
+            hasQuickReply = true;
         };
     });
 
-    // * Build Response
-    response = response.filter(res => !(res instanceof Object));
+    // Build Response
+    response = response.filter(msg => !(msg instanceof Object));
     response.forEach((message: any, index: number) => { 
-        if (!(message instanceof Object)) {
-            if (response.length - 1 === index) {
-                payload.text = message;
-                agent.add(new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true}));
-            } else {
-                agent.add(message);
-            }
+        if (response.length - 1 === index && hasQuickReply) {
+            payload.text = message;
+            agent.add(new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true}));
+        } else {
+            agent.add(message);
         }
     });
 };

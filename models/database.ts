@@ -46,7 +46,7 @@ async function getChatReply(reply: string, language: ChatLanguage) {
         const doc = await database.collection(ChatModule.PROPERTY_REPLY).doc(reply).get();
         const data = doc.data();
 
-        if (data) { return data[language]; }
+        if (data) { return data[`${language}_reply`] ?? []; }
     } catch (err) {
         console.log(err);
     };
@@ -103,7 +103,7 @@ async function getSymptomKnowledge(symptom: string) {
     };
 };
 
-export { getChatResponse, getUser, setUser, updateField, getSymptomKnowledge }
+export { getChatResponse, getChatReply, getUser, setUser, updateField, getSymptomKnowledge }
 
 
 

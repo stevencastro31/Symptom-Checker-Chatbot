@@ -1,8 +1,9 @@
-import { getChatResponse, updateField } from "@libs/database";
+import { getChatReply, getChatResponse, updateField } from "@libs/database";
 import { ChatIntent } from "enums/intent";
 import { ChatModule } from "enums/module"
 import { checkIntroductionFlags, fullfilmentRequest, fullfilmentResponse, triggerEvent } from "./chatbot_functions";
 import { ChatEvent } from "enums/event";
+import { ChatQuickReply } from "enums/quick_reply";
 
 const module_name = ChatModule.INTRODUCTION;
 const module_functions = {
@@ -61,7 +62,7 @@ const module_functions = {
 
         if (!agent.parameters.language) {
             response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_SET, session.language));
-            
+            response = response.concat({quickReplies: await getChatReply(ChatQuickReply.LANGUAGE, session.language)});
         } 
         
         else {
@@ -94,6 +95,7 @@ const module_functions = {
             agent.context.set({name: 'LANGUAGE', lifespan: 5});
             response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_CHANGE, session.language));
             response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_SET, session.language));
+            response = response.concat({quickReplies: await getChatReply(ChatQuickReply.LANGUAGE, session.language)});
         }
 
         // Fullfilment Response
@@ -109,7 +111,7 @@ async function introduction_flow(agent: any, session: any) {
     // Initial Greeting
     if (session.flags.start_flag) { 
         response = response.concat(await getChatResponse(module_name, ChatIntent.GREETING, session.language));
-        session.start_flag = false;  
+        session.flags.start_flag = false;  
     }
 
     // Check Flags
@@ -117,11 +119,13 @@ async function introduction_flow(agent: any, session: any) {
     if (session.flags.language_flag) {
         agent.context.set({name: 'LANGUAGE', lifespan: 5});
         response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_SET, session.language));
+        response = response.concat({quickReplies: await getChatReply(ChatQuickReply.LANGUAGE, session.language)});
     }
 
     else if (session.flags.privacy_policy_flag) {
         agent.context.set({name: 'PRIVACY_POLICY', lifespan: 5});
         response = response.concat(await getChatResponse(module_name, ChatIntent.PRIVACY_POLICY, session.language));
+        response = response.concat({quickReplies: await getChatReply(ChatQuickReply.PRIVACY_POLICY, session.language)});
     }
 
     else if (session.flags.checkup_flag) {

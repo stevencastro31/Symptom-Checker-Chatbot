@@ -9,8 +9,12 @@ async function webhook(agent: any) {
     // {content_type: "text", title: 'BIGBANG', payload: 'BIGBANG'}, 
     // {content_type: "text", title: 'PSY', payload: 'PSY'}]
 
-    let response: any[] = ['1', '2', '3', {quickReplies: ['4', '5', '6']}, '25'];
-    fullfilmentResponse(agent, response, {});
+    agent.context.set({name: 'SESSION', lifespan: 0, parameters: {}});
+    agent.add('SESSION DELETE');
+
+    // let response: any[] = ['1', '2', '3', {quickReplies: ['4', '5', '6']}, '25'];
+    // // let response: any[] = ['1', '2', '3', '25'];
+    // fullfilmentResponse(agent, response, {});
 
     // agent.add('1');
     // agent.add('2');
@@ -32,7 +36,12 @@ async function jump_flow(agent: any) {
     // TODO: JUMP TO SYMPTOM FLOW
 };
 
-export { webhook, set_context, jump_flow }
+async function reset(agent: any) {
+    agent.context.set({name: 'SESSION', lifespan: 0, parameters: {}});
+    agent.add('SESSION RESET');
+};
+
+export { webhook, set_context, jump_flow, reset}
 
 // INTENT CHAINING ONLY HAS A MAX OF 3
 

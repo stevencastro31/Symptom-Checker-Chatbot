@@ -10,7 +10,8 @@ import { ChatLanguage } from 'enums/language';
 import { ChatIntent } from 'enums/intent';
 
 import { setData } from 'extra/symptom-dialogue';
-import { getSymptomKnowledge } from '@libs/database';
+import { getChatReply, getSymptomKnowledge } from '@libs/database';
+import { ChatQuickReply } from 'enums/quick_reply';
 
 const loader = new ExcelLoader();
 
@@ -33,7 +34,8 @@ async function main() {
 
 
 
-    console.log(await getSymptomKnowledge('cough'));
+    // console.log(await getSymptomKnowledge('cough'));
+    console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
 
 
     // for (let i = start -2; i < end -1; i++) {

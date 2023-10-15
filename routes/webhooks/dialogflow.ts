@@ -4,7 +4,7 @@ import module_introduction from '@fulfillment/module_introduction';
 import module_general from '@fulfillment/module_general_questions';
 import module_symptom_elicitation from '@fulfillment/module_symptom_elicitation';
 import { ChatIntent } from 'enums/intent';
-import { jump_flow, set_context, webhook } from '@fulfillment/webhook';
+import { jump_flow, reset, set_context, webhook } from '@fulfillment/webhook';
 
 const router: Router = express.Router();
 
@@ -82,6 +82,7 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set('webhook', webhook);
     handlers.set('developer_context', set_context);
     handlers.set('developer_jump', jump_flow);
+    handlers.set('reset', reset);
 
     try {
         agent.handleRequest(handlers);
