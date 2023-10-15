@@ -1,4 +1,4 @@
-export enum ChatContext {
+export enum ChatQuickReply {
     PRIVACY_POLICY = 'PRIVACY_POLICY',
     LANGUAGE = 'LANGUAGE',
     SEX = 'SEX',

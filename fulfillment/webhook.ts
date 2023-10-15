@@ -9,9 +9,8 @@ async function webhook(agent: any) {
     // {content_type: "text", title: 'BIGBANG', payload: 'BIGBANG'}, 
     // {content_type: "text", title: 'PSY', payload: 'PSY'}]
 
-    // let response: any[] = ['1', '2', '3', {text: '4', quickReplies: payload}];
-
-    // fullfilmentResponse(agent, response, {});
+    let response: any[] = ['1', '2', '3', {quickReplies: ['4', '5', '6']}, '25'];
+    fullfilmentResponse(agent, response, {});
 
     // agent.add('1');
     // agent.add('2');
@@ -19,9 +18,6 @@ async function webhook(agent: any) {
     // agent.add(new Payload(agent.UNSPECIFIED, , {rawPayload: true, sendAsMessage: true}));
 
     // {text: 'What is yo fav?', quickReplies: payload}
-
-    agent.handleIntent(ChatIntent.ELICITATION);
-
     // triggerEvent(agent, ChatEvent.ELICITATION);
     // agent.add('COOL!');
 };

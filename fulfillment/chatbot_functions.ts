@@ -37,11 +37,25 @@ async function fullfilmentRequest(agent: any) {
 // * Repetitive Code for Response & Saving Session Data
 async function fullfilmentResponse(agent: any, response: any[], session: any) {
     agent.context.set({name: 'SESSION', lifespan: 99, parameters: session});
-    response.forEach((message: any) => { 
-        if (message instanceof Object) {
-            agent.add(new Payload(agent.UNSPECIFIED, message, {rawPayload: true, sendAsMessage: true}));
-        } else {
-            agent.add(message);
+
+    // * Create a Quick Reply in the Response (Latest)
+    const payload: any = {text: 'default', quickReplies: []};
+    response.forEach((message: any) => {
+        if (message instanceof Object) { 
+            payload.quickReplies = createPayload(message.quickReplies); 
+        };
+    });
+
+    // * Build Response
+    response = response.filter(res => !(res instanceof Object));
+    response.forEach((message: any, index: number) => { 
+        if (!(message instanceof Object)) {
+            if (response.length - 1 === index) {
+                payload.text = message;
+                agent.add(new Payload(agent.UNSPECIFIED, payload, {rawPayload: true, sendAsMessage: true}));
+            } else {
+                agent.add(message);
+            }
         }
     });
 };
@@ -78,6 +92,20 @@ async function checkSymptomElicitationFlags(session: any) {
     };
     session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && session.elicitation.next_subject !== null;
     session.flags.end_probing_flag = 0 === session.elicitation.current_questions.length && session.elicitation.next_subject === null;
+};
+
+// * Build Quick Reply Payload
+function createPayload(quickReplies: string[]) {
+    const payload: Object[] = [];
+    quickReplies.forEach((quickReply: string) => {
+        payload.push({
+            content_type: "text",
+            title: quickReply,
+            payload: quickReply,
+            // image_url:"http://example.com/img/red.png"
+        });
+    });
+    return payload;
 };
 
 export { checkIntroductionFlags, checkGeneralQuestionFlags, checkSymptomElicitationFlags, triggerEvent, fullfilmentRequest, fullfilmentResponse }
