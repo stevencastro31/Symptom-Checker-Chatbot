@@ -397,7 +397,8 @@ async function symptom_elicitation_flow(agent: any, session: any) {
     if (session.flags.initial_flag) {
         agent.context.set({name: 'INITIAL', lifespan: 5});
         response = response.concat(await getChatResponse(module_name, ChatIntent.INITIAL_SYMPTOM_SET, session.language));
-        response = response.concat({quickReplies: await getChatReply(ChatQuickReply.INITIAL, session.language)});
+        let quick_replies = await getChatReply(ChatQuickReply.INITIAL, session.language);
+        if (quick_replies) { response = response.concat({quickReplies: quick_replies}); }
     } 
 
     else if (session.flags.end_probing_flag) {
