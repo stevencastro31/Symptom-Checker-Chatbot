@@ -233,6 +233,8 @@ const module_functions = {
         const session = await fullfilmentRequest(agent);
 
         session.elicitation.current_properties.moisture = agent.parameters.moisture;
+        // Remove Phlegm Follow-up
+        if (agent.parameters.moisture === 'dry') { session.elicitation.current_questions.shift(); }
         agent.context.set({name: ChatContext.MOISTURE, lifespan: 0});
         triggerEvent(agent, ChatEvent.ELICITATION);
 
@@ -413,6 +415,13 @@ async function symptom_elicitation_flow(agent: any, session: any) {
     
     else {
         if (session.flags.get_knowledge_flag) {
+            // * Save Symptom to Session
+            if (session.elicitation.current_subject) {
+                session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
+                session.elicitation.current_properties = {};
+                console.log(session.elicitation.symptoms);
+            }
+
             // * Fetch Symptom Knowledge Base
             const knowledge: any = await getSymptomKnowledge(session.elicitation.next_subject);
             session.elicitation.current_subject = session.elicitation.next_subject;
@@ -425,11 +434,13 @@ async function symptom_elicitation_flow(agent: any, session: any) {
         if (0 < session.elicitation.current_questions.length) {
             // * Ask Property Questions
             const question_type = session.elicitation.current_questions.shift();
-    
             agent.context.set({name: getPropertyContext(question_type), lifespan: 5});
             const property_questions: any = await getChatResponse(module_name, session.elicitation.current_subject, session.language);
             response = response.concat(property_questions[question_type]);
-            response = response.concat({quickReplies: await getChatReply(question_type, session.language)});
+
+            // * Add Quick Reply if Available
+            let quick_replies = await getChatReply(question_type, session.language);
+            if (quick_replies) { response = response.concat({quickReplies: quick_replies}); }
         } 
         
         else {

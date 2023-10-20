@@ -28,8 +28,8 @@ async function fullfilmentRequest(agent: any) {
     session.userid = session.userid ?? getUserFacebookID(agent);
     const user: any = await getUser(session.userid);
 
-    console.log('Session: ', agent.session);
-    console.log('Params: ', session);
+    // console.log('Session: ', agent.session);
+    // console.log('Params: ', session);
 
     session.flags = session.flags ?? {};
     session.flags.start_flag = session.flags.start_flag === undefined;

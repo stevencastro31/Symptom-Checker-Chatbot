@@ -46,7 +46,7 @@ async function getChatReply(reply: string, language: ChatLanguage) {
         const doc = await database.collection(ChatModule.PROPERTY_REPLY).doc(reply).get();
         const data = doc.data();
 
-        if (data) { return data[`${language}_reply`] ?? []; }
+        if (data) { return data[`${language}_reply`] ?? null; }
     } catch (err) {
         console.log(err);
     };
