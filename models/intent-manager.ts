@@ -29,6 +29,18 @@ class IntentManager {
         }
     };
 
+    async updateIntent(intent: any) {
+        if (intent instanceof Intent) {
+            const request = intent.buildIntentRequest(this.intentClient.projectAgentPath(this.projectId));
+            const id = await this.getIntentId(intent);
+            request.intent.name = id;
+            const [response] = await this.intentClient.updateIntent(request);
+            console.log(`Updated Intent: ${response.displayName}`);
+        } else {
+            console.log('Create Update Error: Parameter is not an Intent Class');
+        }
+    };
+
     async deleteIntent(intent: any) {
         if (intent instanceof Intent) {
             const intentId = await this.getIntentId(intent);
@@ -42,14 +54,6 @@ class IntentManager {
             console.log(`Deleted Intent: ${intent.displayName}`);
         } else {
             console.log('Delete Intent Error: Parameter is not an Intent Class');
-        }
-    };
-
-    async updateIntent(intent: any) {
-        if (intent instanceof Intent) {
-
-        } else {
-            console.log('Update Intent Error: Parameter is not an Intent Class');
         }
     };
 

@@ -29,10 +29,11 @@ const delimiters = {
 };
 
 async function main() {
-    const start = 75;
-    const end = 79;
+    const start = 2;
+    const end = 11;
 
-
+    // 2-79 EN
+    // 41-79 TL
 
     // console.log(await getSymptomKnowledge('cough'));
     // console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
@@ -40,8 +41,10 @@ async function main() {
 
     for (let i = start -2; i < end -1; i++) {
         var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-        await intentManager.deleteIntent(intent);
-        await intentManager.createIntent(intent);
+        // await intentManager.deleteIntent(intent);
+        await intentManager.updateIntent(intent);
+        // await intentManager.createIntent(intent);
+        // console.log(await intentManager.getIntentId(intent));
     }
     // const response = await getChatResponse(ChatModule.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
     // console.log(response);       

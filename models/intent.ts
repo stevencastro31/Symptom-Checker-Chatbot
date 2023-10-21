@@ -7,6 +7,7 @@ interface TrainingPhrase {
 
 class Intent {
     delimiters: any;
+    name: string;
     displayName: string;
     prompts: any;
     parameters: Object[];
@@ -37,6 +38,7 @@ class Intent {
             this.delimiters = delimiters;
         }
 
+        this.name = '';
         this.displayName = formatIntentName(intentJson.intentName);
         this.prompts = formatPrompts(intentJson.prompts, this.delimiters.prompts);
         this.parameters = formatParameters(intentJson.parameters, this.delimiters.parameters, this.prompts);
@@ -52,10 +54,11 @@ class Intent {
         this.action = formatAction(intentJson.action);
     };
 
-    buildIntentRequest(agentPath: string) {
+    buildIntentRequest(agentPath: string): any {
         const intentRequest = {
             parent: agentPath,
             intent: {
+                name: this.name,
                 displayName: this.displayName,
                 trainingPhrases: this.trainingPhrases,
                 messages: this.messages,
