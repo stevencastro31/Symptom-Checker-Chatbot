@@ -42,8 +42,13 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     // Symptom Property Intents
     handlers.set(ChatIntent.HAS_SYMPTOM_YES, module_symptom_elicitation.has_symptom_yes);
     handlers.set(ChatIntent.HAS_SYMPTOM_NO, module_symptom_elicitation.has_symptom_no);
+
     handlers.set(ChatIntent.INTERFERENCE_YES, module_symptom_elicitation.inteference_yes);
     handlers.set(ChatIntent.INTERFERENCE_NO, module_symptom_elicitation.inteference_no);
+
+    handlers.set(ChatIntent.PAINKILLERS_YES, module_symptom_elicitation.pain_killers_yes);
+    handlers.set(ChatIntent.PAINKILLERS_NO, module_symptom_elicitation.pain_killers_no);
+    
     handlers.set(ChatIntent.CHANGE_QUANTITY_SET, module_symptom_elicitation.change_quantity_set);
 
     handlers.set(ChatIntent.DURATION_GENERIC_SET, module_symptom_elicitation.duration_generic_set);
@@ -70,6 +75,7 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.MOISTURE_SET, module_symptom_elicitation.moisture_set);
     handlers.set(ChatIntent.PHYSICAL_STATE_SET, module_symptom_elicitation.physical_state_set);
     handlers.set(ChatIntent.COUNT_SET, module_symptom_elicitation.count_set);
+    handlers.set(ChatIntent.VISIBILITY_SET, module_symptom_elicitation.visibility_set);
 
     handlers.set(ChatIntent.TRIGGER_ACTIVITY_SET, module_symptom_elicitation.trigger_activity_set);
     handlers.set(ChatIntent.TRIGGER_STATE_SET, module_symptom_elicitation.trigger_state_set);

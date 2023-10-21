@@ -47,4 +47,7 @@ export enum ChatIntent {
     CHANGE_QUANTITY_SET = 'change_quantity_set',
     CARDIOVASCULAR_SET = 'cardiovascular_set',
     RESPIRATORY_SET = 'respiratory_set',
+    VISIBILITY_SET = 'visibility_set',
+    PAINKILLERS_YES = 'pain_killers_yes',
+    PAINKILLERS_NO = 'pain_killers_no',
 };

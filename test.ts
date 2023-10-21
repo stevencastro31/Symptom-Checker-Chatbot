@@ -29,20 +29,20 @@ const delimiters = {
 };
 
 async function main() {
-    const start = 65;
-    const end = 74;
+    const start = 75;
+    const end = 79;
 
 
 
     // console.log(await getSymptomKnowledge('cough'));
-    console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
+    // console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
 
 
-    // for (let i = start -2; i < end -1; i++) {
-    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-    //     await intentManager.deleteIntent(intent);
-    //     await intentManager.createIntent(intent);
-    // }
+    for (let i = start -2; i < end -1; i++) {
+        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+        await intentManager.deleteIntent(intent);
+        await intentManager.createIntent(intent);
+    }
     // const response = await getChatResponse(ChatModule.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
     // console.log(response);       
 };

@@ -387,6 +387,39 @@ const module_functions = {
         // Fullfilment Response
         fullfilmentResponse(agent, [], session);
     },    
+
+    visibility_set: async (agent: any) => {
+        const session = await fullfilmentRequest(agent);
+
+        session.elicitation.current_properties.visibility = agent.parameters.visibility;
+        agent.context.set({name: ChatContext.VISIBILITY, lifespan: 0});
+        triggerEvent(agent, ChatEvent.ELICITATION);
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, [], session);
+    },   
+
+    pain_killers_yes: async (agent: any) => {
+        const session = await fullfilmentRequest(agent);
+
+        session.elicitation.current_properties.pain_killers = true;
+        agent.context.set({name: ChatContext.PAINKILLERS, lifespan: 0});
+        triggerEvent(agent, ChatEvent.ELICITATION);
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, [], session);
+    },   
+
+    pain_killers_no: async (agent: any) => {
+        const session = await fullfilmentRequest(agent);
+
+        session.elicitation.current_properties.pain_killers = false;
+        agent.context.set({name: ChatContext.PAINKILLERS, lifespan: 0});
+        triggerEvent(agent, ChatEvent.ELICITATION);
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, [], session);
+    },
 };
 
 async function symptom_elicitation_flow(agent: any, session: any) {
