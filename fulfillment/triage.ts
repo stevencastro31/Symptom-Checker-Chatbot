@@ -1,127 +1,178 @@
-const userToSeverity = (input:  {name: string;property: {[key: string]: any;}}): number => {
+const userToSeverity = (inputs: { name: string; property: { [key: string]: any } }[]): number => {
+  let triageLevels: number = 0;
+  let impression_cardio: number = 0;
+  let impression_respiratory: number = 0;
+
+  inputs.forEach((input) => {
     const { name, property } = input;
-    const { moisture, duration_generic, color_phlegm,triggered_activity,visibility } = property;
 
     
     switch (name) {
         case 'presyncope':
-          switch (property.duration_explicit) {
-            case 'days':
-              return 2;
-            case 'weeks':
-              return 4;
-            case 'months':
-              return 6;
+          if(property.has == true){
+              switch (property.difficulty) {
+                  case 'easy':
+                    triageLevels += 2;
+                    impression_cardio+=2;
+                    break;
+                  case 'moderate':
+                    triageLevels += 4;
+                    impression_cardio+=4;
+                    break;
+                  case 'hard':
+                    triageLevels += 6;
+                    impression_cardio+=6;
+                    break;
+                }
+                
           }
+          
           break;
     
         case 'hematuria':
-          switch (property.duration_explicit) {
-            case 'days':
-              return 3;
-            case 'weeks':
-              return 5;
-            case 'months':
-              return 7;
+          
+          if(property.has == true)
+          switch (property.visibility) {
+            case 'clear':
+              triageLevels += 3;
+              break;
+            case 'cloudy':
+              triageLevels += 5;
+              break;
+            case 'murky':
+              triageLevels += 7;
+              break;
           }
           break;
     
         case 'cyanosis':
-          switch (property.duration_explicit) {
-            case 'days':
-              return 4;
-            case 'weeks':
-              return 6;
-            case 'months':
-              return 8;
+          if(property.has == true)
+          switch (property.difficulty) {
+            case 'mild':
+              triageLevels += 4;
+              break;
+            case 'moderate':
+              triageLevels += 6;
+              break;
+            case 'severe':
+              triageLevels += 8;
+              break;
           }
           break;
     
         case 'blurry vision':
-          switch (property.duration_explicit) {
-            case 'days':
-              return 2;
-            case 'weeks':
-              return 4;
-            case 'months':
-              return 6;
+          if(property.has == true)
+          switch (property.frequency_explicit) {
+            case 'occasional':
+              triageLevels += 2;
+              break;
+            case 'frequent':
+              triageLevels += 4;
+              break;
+            case 'constant':
+              triageLevels += 6;
+              break;
           }
           break;
     
         case 'bradycardia':
+          if(property.has == true)
           if (parseInt(property.heartrate) >=50 ) {
-            return 3;
+              triageLevels += 3;
           } else if (parseInt(property.heartrate) >= 40) {
-            return 5;
+              triageLevels += 5;
           } else if (parseInt(property.heartrate) < 40){
-            return 7;
+              triageLevels += 7;
           }
           break;
     
         case 'chest pain':
+          if(property.has == true)
           switch (property.pain_adjectives) {
             case 'dull'&&'ache':
-              return 4;
+              triageLevels += 4;
+              break;
             case 'persistent' && 'ache':
-              return 6;
+              triageLevels += 6;
+              break;
             case 'sharp' || 'stabbing':
-              return 8;
+              triageLevels += 8;
+              break;
           }
           break;
     
         case 'chest tightness':
           switch (property.physical_state) {
             case 'activity':
-              return 4;
+              triageLevels += 4;
+              break;
               case 'rest':
-                return 7;
+              triageLevels += 7;
+              break;
           }
           break;
     
         case 'chills':
-          switch (property.duration_explicit) {
+          if(property.has == true)
+          switch (property.duration_generic) {
             case 'days':
-              return 1;
+              triageLevels += 1;
+              break;
             case 'weeks':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'months':
-              return 5;
+              triageLevels += 5;
+              break;
           }
           break;
     
         case 'confusion':
-          switch (property.duration_explicit) {
+          if(property.has == true)
+          switch (property.duration_generic) {
             case 'days':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'weeks':
-              return 5;
+              triageLevels += 5;
+              break;
             case 'months':
-              return 7;
+              triageLevels += 7;
+              break;
           }
           break;
     
         case 'cough':
+          if(property.has == true)
             switch (property.duration_generic) {
                 case 'days':
                     switch(property.moisture){
                       case 'wet':
-                        return 4;
+                          triageLevels += 4;
+                          break;
                       case 'dry':
-                        return 2;
+                          triageLevels += 2;
+                          break;
                     }
+                    break;
                 case 'weeks':
                   switch(property.moisture){
                     case 'wet':
-                      return 5;
+                      triageLevels += 5;
+                      break;
                     case 'dry':
-                      return 3;
+                      triageLevels += 3;
+                      break;
                   }
+                  break;
                   case 'months':
                     switch(property.moisture){
                       case 'wet':
-                        return 6;
+                          triageLevels += 6;
+                          break;
                       case 'dry':
-                        return 4;
+                          triageLevels += 4;
+                          break;
 
                     }
                 default:
@@ -130,159 +181,217 @@ const userToSeverity = (input:  {name: string;property: {[key: string]: any;}}):
           break;
     
         case 'dizziness':
-          switch (property.duration_explicit) {
+          if(property.has == true)
+          switch (property.duration_generic) {
             case 'days':
               switch(property.physical_state){
                 case 'activity':
-                  return 2;
+                    triageLevels += 2;
+                    break;
                   case 'rest':
-                  return 4;
+                    triageLevels += 4;
+                    break;
               }
+              break;
             case 'weeks':
               switch(property.physical_state){
                 case 'activity':
-                  return 3;
+                    triageLevels += 3;
+                    break;
                   case 'rest':
-                  return 5;
+                      triageLevels += 5;
+                      break;
               }
+              break;
             case 'months':
               switch(property.physical_state){
                 case 'activity':
-                  return 4;
+                  triageLevels += 4;
+                  break;
                   case 'rest':
-                  return 6;
+                      triageLevels += 6;
+                      break;
               }
           }
           break;
     
         case 'hyperhidrosis':
-          switch (property.duration_explicit) {
-            case 'days':
-              return 3;
-            case 'weeks':
-              return 5;
-            case 'months':
-              return 7;
+          if(property.has == true)
+          switch (property.moisture) {
+            case 'wet':
+              triageLevels += 3;
+              break;
+            case 'damp':
+              triageLevels += 5;
+              break;
+            case 'drenched':
+              triageLevels += 7;
+              break;
           }
           break;
     
         case 'syncope':
+          if(property.has == true)
           if (parseInt(property.count) < 1 ) {
             switch(property.trigger_activity){
               case 'activity':
-                return 5;
+                  triageLevels += 5;
+                  break;
               case 'rest':
-                return 6;
+                  triageLevels += 6;
+                  break;
             }
           } else if (parseInt(property.count) <= 2) {
             switch(property.trigger_activity){
               case 'activity':
-                return 6;
+                  triageLevels += 6;
+                  break;
               case 'rest':
-                return 8;
+                  triageLevels += 8;
+                  break;
             }
           } else if (parseInt(property.count) > 2){
             switch(property.trigger_activity){
               case 'activity':
-                return 8;
+                  triageLevels += 8;
+                  break;
               case 'rest':
-                return 10;
+                  triageLevels += 10;
+                  break;
             }
           }
           break;
     
         case 'asthenia':
+          if(property.has == true)
           switch (property.trigger_activity) {
             case'activity':
-              return 2;
+            triageLevels += 2;
+            break;
             case 'rest':
-              return 6;
+              triageLevels += 6;
+              break;
           }
           break;
     
         case 'fever':
+          if(property.has == true)
           if (parseInt(property.temperature_body) >=37.5 && parseInt(property.temperature_body)<= 38 ) {
-            return 3;
+              triageLevels += 3;
           } else if (parseInt(property.temperature_body) >=38.1 && parseInt(property.temperature_body)<= 39) {
-            return 5;
+              triageLevels += 5;
           } else if (parseInt(property.temperature_body) >39){
-            return 7;
+              triageLevels += 7;
           }
           break;
     
         case 'headaches':
+          if(property.has == true)
           switch (property.pain_adjectives) {
             case 'dull'&&'ache':
-              return 4;
+              triageLevels += 4;
+              break;
             case 'persistent' && 'ache':
-              return 6;
+              triageLevels += 6;
+              break;
             case 'debilitating':
-              return 8;
+              triageLevels += 8;
+              break;
           }
           break;
     
         case 'dysphagia':
+          if(property.has == true)
           switch (property.difficulty) {
            case 'easy':
-            return 3;
+              triageLevels += 3;
+              break;
           case 'moderate':
-            return 5;
+              triageLevels += 5;
+              break;
          case 'hard':
-            return 7;
+          triageLevels += 7;
+          break;
           }
           break;
     
         case 'indigestion':
+          if(property.has == true)
           switch (property.frequency_generic) {
-            //TODO Indigestion
+              case 'occasional':
+                  triageLevels += 2;
+                  break;
+                case 'frequent':
+                  triageLevels += 4;
+                  break;
+                case 'constant':
+                  triageLevels += 6;
+                  break;
           }
           break;
     
         case 'loss of appetite':
-          switch (property.duration_explicit) {
-            case 'days':
-              return 2;
-            case 'weeks':
-              return 4;
-            case 'months':
-              return 6;
+          if(property.has == true)
+          switch (property.frequency_generic) {
+            case 'occasional':
+              triageLevels += 2;
+              break;
+            case 'frequent':
+              triageLevels += 4;
+              break;
+            case 'constant':
+              triageLevels += 6;
+              break;
           }
           break;
 
         case 'loss of smell':
+          if(property.has == true)
             switch (property.pain_adjectives) {
                 case 'mild':
-                    return 3;
+                  triageLevels += 3;
+                  break;
                 case 'moderate':
-                    return 5;
+                  triageLevels += 5;
+                  break;
                 case 'severe':
-                    return 7;
+                  triageLevels += 7;
+                  break;
             }
             break;
 
         case 'loss of taste':
+          if(property.has == true)
             switch (property.pain_adjectives) {
                 case 'mild':
-                    return 3;
+                  triageLevels += 3;
+                  break;
                 case 'moderate':
-                    return 5;
+                  triageLevels += 5;
+                  break;
                 case 'severe':
-                    return 7;
+                  triageLevels += 7;
+                  break;
             }
             break;
 
         case 'low urine output':
+          if(property.has == true)
             switch (property.difficulty) {
                 case 'easy':
-                    return 3;
+                  triageLevels += 3;
+                  break;
                 case 'moderate':
-                    return 5;
+                  triageLevels += 5;
+                  break;
                 case 'hard':
-                    return 8;
+                  triageLevels += 8;
+                  break;
             }
             break;
 
         case 'mucus/sputum':
+          if(property.has == true)
             switch (property.color_phlegm) {
                 case 'clear':
                 case 'white':
@@ -290,197 +399,248 @@ const userToSeverity = (input:  {name: string;property: {[key: string]: any;}}):
                 case 'green':
                     switch (property.pain_adjectives) {
                         case 'mild':
-                            return 2;
+                          triageLevels += 2;
+                          break;
                         case 'moderate':
-                            return 4;
+                          triageLevels += 4;
+                          break;
                         case 'severe':
-                            return 6;
+                          triageLevels += 6;
+                          break;
                     }
                     break;
                 case 'red':
                     switch (property.pain_adjectives) {
                         case 'mild':
-                            return 5;
+                          triageLevels += 5;
+                          break;
                         case 'moderate':
-                            return 7;
+                          triageLevels += 7;
+                          break;
                         case 'severe':
-                            return 9;
+                          triageLevels += 9;
+                          break;
                     }
                     break;
             }
             break;
 
         case 'night sweats':
+          if(property.has == true)
           switch (property.frequency_generic) {
             case 'occasional':
-              return 2;
+              triageLevels += 2;
+              break;
             case 'frequent':
-              return 4;
+              triageLevels += 4;
+              break;
             default:
-              return 6; // For severe
+              triageLevels += 6; // For severe
           }
           break;
 
         case 'nosebleed':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'occasional':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'frequent':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 8; // For severe
+              triageLevels += 8; // For severe
           }
           break;
 
         case 'pale complexion':
+          if(property.has == true)
           switch (property.change_quantity) {
             case 'slightly':
-              return 2;
+              triageLevels += 2;
+              break;
             case 'noticeably':
-              return 4;
+              triageLevels += 4;
+              break;
             default:
-              return 6; // For severe
+              triageLevels += 6; // For severe
           }
           break;
 
         case 'palpitations':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'occasional':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'frequent':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 7; // For severe
+              triageLevels += 7; // For severe
           }
           break;
 
         case 'panic & anxiety':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'occasional':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'frequent':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 7; // For severe
+              triageLevels += 7; // For severe
           }
           break;
 
         case 'peripheral edema':
+          if(property.has == true)
           switch (property.change_quantity) {
             case 'slight':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'persistent':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 7; // For severe
+              triageLevels += 7; // For severe
           }
           break;
 
         case 'rapid breathing':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'slightly':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'noticeably':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 8; // For severe
+              triageLevels += 8; // For severe
           }
           break;
 
         case 'runny nose':
+          if(property.has == true)
           switch (property.change_quantity) {
             case 'clear':
-              return 2;
+              triageLevels += 2;
+              break;
             case 'colored':
-              return 4;
+              triageLevels += 4;
+              break;
             default:
-              return 6; // For severe
+              triageLevels += 6; // For severe
           }
           break;
 
         case 'short breath':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'only with exertion':
-              return 4;
+              triageLevels += 4;
+              break;
             case 'occurs with minimal activity':
-              return 6;
+              triageLevels += 6;
+              break;
             default:
-              return 8; // For severe
+              triageLevels += 8; // For severe
           }
           break;
 
         case 'sore throat':
+          if(property.has == true)
           switch (property.pain_intensity) {
             case '2':
-              return 2;
+              triageLevels += 2;
+              break;
             case '4':
-              return 4;
+              triageLevels += 4;
+              break;
             default:
-              return 6; // For severe
+              triageLevels += 6; // For severe
           }
           break;
 
         case 'tachycardia':
+          if(property.has == true)
           if (parseInt(property.heartrate) > 100) {
             if (property.heartrate <= 110) {
-              return 3;
+              triageLevels += 3;
             } else if (property.heartrate <= 130) {
-              return 5;
+              triageLevels += 5;
             } else {
-              return 8; // For very high rates
+              triageLevels += 8; // For very high rates
             }
           }
           break;
 
         case 'trouble sleeping':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'occasional':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'frequent':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 7; // For severe
+              triageLevels += 7; // For severe
           }
           break;
 
         case 'weight gain':
+          if(property.has == true)
           switch (property.change_quantity) {
             case 'small increase':
-              return 2;
+              triageLevels += 2;
+              break;
             case 'noticeable increase':
-              return 4;
+              triageLevels += 4;
+              break;
             default:
-              return 6; // For rapid and significant increase
+              triageLevels += 6; // For rapid and significant increase
           }
           break;
 
         case 'weight loss':
+          if(property.has == true)
           switch (property.change_quantity) {
             case 'small decrease':
-              return 2;
+              triageLevels += 2;
+              break;
             case 'noticeable decrease':
-              return 4;
+              triageLevels += 4;
+              break;
             default:
-              return 6; // For rapid and significant decrease
+              triageLevels += 6; // For rapid and significant decrease
           }
           break;
 
         case 'wheezing':
+          if(property.has == true)
           switch (property.frequency_adverbs) {
             case 'occasional':
-              return 3;
+              triageLevels += 3;
+              break;
             case 'frequent':
-              return 5;
+              triageLevels += 5;
+              break;
             default:
-              return 7; // For constant
+              triageLevels += 7; // For constant
           }
           break;
     
         default:
-          return 0; // Default value for unknown symptoms
-      }
-      return 0;
-      
-}
+          triageLevels += 0; // Default value for unknown symptoms
+        }
+      });
+    
+      return triageLevels;
+    }
+
 
 export { userToSeverity }
