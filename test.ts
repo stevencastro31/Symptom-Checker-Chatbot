@@ -32,6 +32,8 @@ async function main() {
     const start = 2;
     const end = 11;
 
+    // await setData();
+    
     // 2-79 EN
     // 41-79 TL
 
@@ -39,13 +41,13 @@ async function main() {
     // console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
 
 
-    for (let i = start -2; i < end -1; i++) {
-        var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-        // await intentManager.deleteIntent(intent);
-        await intentManager.updateIntent(intent);
-        // await intentManager.createIntent(intent);
-        // console.log(await intentManager.getIntentId(intent));
-    }
+    // for (let i = start -2; i < end -1; i++) {
+    //     var intent = new Intent(data[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+    //     // await intentManager.deleteIntent(intent);
+    //     await intentManager.updateIntent(intent);
+    //     // await intentManager.createIntent(intent);
+    //     // console.log(await intentManager.getIntentId(intent));
+    // }
     // const response = await getChatResponse(ChatModule.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
     // console.log(response);       
 };
