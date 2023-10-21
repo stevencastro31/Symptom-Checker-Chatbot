@@ -15,6 +15,7 @@ const loader = new ExcelLoader();
 async function updateFirestore(collectionid: string, symptomid: string, data: Object) {
     try {
         const res = await database.collection(collectionid).doc(symptomid).set(data);
+        console.log(`Updated Firestore: ${collectionid} - ${symptomid}`);
     } catch (err) {
         console.log(err);
     };
@@ -84,7 +85,8 @@ async function setSymptomsKnowledgeBase() {
         }
 
         document = {
-            questions: questions
+            questions: questions,
+            next: item['next'] === '' ? null : item['next']
         }
         // add to firestore
         await updateFirestore('knowledge_base', item.symptom, document);
@@ -111,9 +113,9 @@ async function setPropertyQuickReply() {
 }
 
 async function setData() {
-    // await setSymptomElicitationDialogues();
-    // await setSymptomsKnowledgeBase();
-    // await setPropertyQuickReply();
+    await setSymptomElicitationDialogues();
+    await setSymptomsKnowledgeBase();
+    await setPropertyQuickReply();
 }
 
 export { setData };
