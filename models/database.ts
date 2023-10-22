@@ -11,7 +11,6 @@ firebase.initializeApp({
 const database = firebase.firestore();
 
 const new_user_obj = {
-    current_session: null,
     general: {
         age: null,
         name: null,
