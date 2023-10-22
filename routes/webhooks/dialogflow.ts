@@ -3,6 +3,7 @@ import { WebhookClient } from 'dialogflow-fulfillment';
 import module_introduction from '@fulfillment/module_introduction';
 import module_general from '@fulfillment/module_general_questions';
 import module_symptom_elicitation from '@fulfillment/module_symptom_elicitation';
+import module_assessment from '@fulfillment/module_assessment';
 import { ChatIntent } from 'enums/intent';
 import { jump_flow, reset, set_context, webhook } from '@fulfillment/webhook';
 
@@ -83,6 +84,9 @@ router.post('/webhook/df', (req: Request, res: Response) => {
 
     handlers.set(ChatIntent.RESPIRATORY_SET, module_symptom_elicitation.respiratory_set);
     handlers.set(ChatIntent.CARDIOVASCULAR_SET, module_symptom_elicitation.cardiovascular_set);
+
+    // Assessment
+    handlers.set(ChatIntent.ASSESSMENT, module_assessment.assessment);
 
     // Test Intents
     handlers.set('webhook', webhook);

@@ -50,4 +50,11 @@ export enum ChatIntent {
     VISIBILITY_SET = 'visibility_set',
     PAINKILLERS_YES = 'pain_killers_yes',
     PAINKILLERS_NO = 'pain_killers_no',
+
+    ASSESSMENT = 'assessment',
+    MINIMAL = 'minimal_triage',
+    DELAYED = 'delayed_triage',
+    IMMEDIATE = 'immediate_triage',
+    EXPECTANT = 'expectant_triage',
+    PREASSESSMENT = 'preassessment',
 };

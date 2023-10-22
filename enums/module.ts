@@ -4,4 +4,5 @@ export enum ChatModule {
     SYMPTOM_ELICITATION = 'module_symptom_elicitation',
     PROPERTY_REPLY = 'module_property_reply',
     KNOWLEDGE_BASE = 'knowledge_base',
+    ASSESSMENT = 'module_assessment',
 };

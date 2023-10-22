@@ -442,26 +442,7 @@ async function symptom_elicitation_flow(agent: any, session: any) {
         session.elicitation.current_subject = null;
 
         console.log(session.elicitation.symptoms);
-        agent.add('DOING TRIAGE STUFF!');
-
-        // TODO: TRIAGE COMPUTATION
-
-        let totalTriageLevel: number = 0;
-
-
-        
-       
-        console.log(totalTriageLevel);
-    
-        
-    if (totalTriageLevel <= 10) agent.add(`The patient should seek medical attention as they are in the Low Level category based on the symptoms and severity they've reported.`);
-    else if (totalTriageLevel <= 20) agent.add(`The patient should seek medical attention as they are in the Medium Urgency category based on the symptoms and severity they've reported.`);
-    else if (totalTriageLevel <= 30) agent.add(`The patient should seek medical attention as they are in the High Urgency category based on the symptoms and severity they've reported.`);
-        else return agent.add(`The patient should seek medical attention as they are in the Critical Urgency category based on the symptoms and severity they've reported.`);
-        
-    
-
-        // TODO: SAVE SESSION?
+        triggerEvent(agent, ChatEvent.ASSESSMENT);
     } 
     
     else {
