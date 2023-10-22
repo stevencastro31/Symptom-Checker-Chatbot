@@ -7,11 +7,11 @@ const credential: Object = JSON.parse(process.env.SERVICE_ACCOUNT ?? "");
 firebase.initializeApp({
     credential: firebase.credential.cert(credential),
 });
-const database = firebase.firestore();
 
+const database = firebase.firestore();
 const loader = new ExcelLoader();
 
-// update firestore
+// * Firestore Update
 async function updateFirestore(collectionid: string, symptomid: string, data: Object) {
     try {
         const res = await database.collection(collectionid).doc(symptomid).set(data);
@@ -21,29 +21,47 @@ async function updateFirestore(collectionid: string, symptomid: string, data: Ob
     };
 };
 
-// questions bank
-async function setSymptomElicitationDialogues() {
-    const data: Object[] = loader.loadExcelSheet('./extra/symptoms-modules.xlsx', 'Symptom Elicitation Dialogues'); // for latest version of the file, export xlsx file from google sheets and use here
-    const symptoms: string[] = [];
-    const groupedModules: { [key: string]: typeof data } = {};
-    data.forEach((item: any) => {
-        if (!groupedModules[item.document] && item.document) {
-            symptoms.push(item.document);
-            groupedModules[item.document] = [];
-        }
-        if (item.document) {
-            groupedModules[item.document].push(item);
-        }
-    });
+// * Dialogues
+async function setDialogues(path_name: string, sheet_name: string, collectionid: string) {
+    const data: Object[] = loader.loadExcelSheet(path_name, sheet_name);
 
-    // iterate through all symptoms
-    for (const symptom of symptoms) {
+    await Promise.all(data.map(async (row: any) => {
         const document: any = {};
 
-        groupedModules[symptom].forEach(async (row: any) => {
+        for (const key in row) {
+
+            // Get English & Tagalog; Exclude those with empty values
+            if ((key.startsWith('english') || key.startsWith('tagalog')) && row[key]) {
+
+                const language = key;
+
+                if (!document[language]) {
+                    document[language] = [];
+                }
+
+                document[language] = row[key].split('|');
+            }
+        }
+
+        // Firestore Update
+        await updateFirestore(collectionid, row.document, document);
+    }));
+}
+
+async function setSymptomElicitationDialogues(path_name: string, sheet_name: string, collectionid: string) {
+    const data: any[] = loader.loadExcelSheet(path_name, sheet_name); // for latest version of the file, export xlsx file from google sheets and use here
+    const result = groupModuleByDocument(data);
+    const groupedModules: { [key: string]: typeof data } = result.groupedModules;
+    const symptoms: string[] = result.symptoms;
+
+    await Promise.all(symptoms.map(async (symptom) => {
+        const document: any = {};
+
+        for (const row of groupedModules[symptom]) {
 
             for (const key in row) {
-                // dont include those with empty values
+
+                // Get English & Tagalog; Exclude those with empty values
                 if ((key.startsWith('english') || key.startsWith('tagalog')) && row[key]) {
                     const language = key;
 
@@ -54,68 +72,97 @@ async function setSymptomElicitationDialogues() {
                     if (!document[language][row.question]) {
                         document[language][row.question] = [];
                     }
-                    
+
                     document[language][row.question] = row[key].split('|');
                 }
             }
-        });
-        // add to firestore
-       await updateFirestore('module_symptom_elicitation', symptom, document);
-    }
-    
+        }
+
+        // Firestore Update
+        await updateFirestore(collectionid, symptom, document);
+
+    }));
 };
 
-// knowledge base
-async function setSymptomsKnowledgeBase() {
-    const data: any[] = loader.loadExcelSheet('./extra/symptoms-modules.xlsx', 'Symptom Knowledge Base'); // for latest version of the file, export xlsx file from google sheets and use here
-    const propertyCount = 8;
+// * Quick Replies
+async function setPropertyQuickReply(path_name: string, sheet_name: string, collectionid: string) {
+    const data: any[] = loader.loadExcelSheet(path_name, sheet_name);
 
-    for (const item of data) {
-        const questions: string[] = [];
-        let document: any = {};
-        for (let i = 1; i <= propertyCount; i++) {
-            const propertyName = `property${i}`;
+    await Promise.all(data.map(async (row: any) => {
+        const document: any = {};
 
-            if(item.hasOwnProperty(propertyName) && item[propertyName]) {
-                questions.push(item[propertyName]);
-            }
-            else {  // break loop if the property is empty
-                break;
+        for (const key in row) {
+
+            // Get English & Tagalog; Exclude those with empty values
+            if ((key.startsWith('english') || key.startsWith('tagalog')) && row[key]) {
+                document[key] = row[key].split('|');
             }
         }
 
+        // Firestore Update
+        await updateFirestore(collectionid, row.property, document);
+    }));
+}
+
+// * Knowledge Base
+async function setSymptomsKnowledgeBase(path_name: string, sheet_name: string, collectionid: string) {
+    const data: any[] = loader.loadExcelSheet(path_name, sheet_name); 
+    const propertyCount = 8;
+
+    await Promise.all(data.map(async (item) => {
+        const questions: string[] = [];
+        let document: any = {};
+
+        for (let i = 1; i <= propertyCount; i++) {
+            const propertyName = `property${i}`;
+
+            // Break Loop if Property is Empty
+            if (!(item.hasOwnProperty(propertyName) && item[propertyName])) {
+                break;
+            }
+
+            questions.push(item[propertyName]);
+        }
+
+        // Set the necessary information needed
         document = {
             questions: questions,
             next: item['next'] === '' ? null : item['next']
         }
-        // add to firestore
-        await updateFirestore('knowledge_base', item.symptom, document);
-    }
+
+        // Firestore Update
+        await updateFirestore(collectionid, item.symptom, document);
+    }));
+
 };
 
-// quick replies
-async function setPropertyQuickReply() {
-    const data: any[] = loader.loadExcelSheet('./extra/symptoms-modules.xlsx', 'Property Quick Reply'); // for latest version of the file, export xlsx file from google sheets and use here
-
-    data.forEach(async (row: any) => {
-        const dialogue: any = {};
-
-        for (const key in row) {
-            // dont include those with empty values
-            if ((key.startsWith('english') || key.startsWith('tagalog')) && row[key]) {
-                dialogue[key] = row[key].split('|');
-            }
+// * Function to Group Module by Symptom Name
+function groupModuleByDocument(data: Object[]) {
+    const groupedModules: { [key: string]: typeof data } = {};
+    const symptoms: string[] = [];
+    data.forEach((item: any) => {
+        if (!groupedModules[item.document] && item.document) {
+            symptoms.push(item.document);
+            groupedModules[item.document] = [];
         }
-        // add to firestore
-        await updateFirestore('module_property_reply', row.property, dialogue);
+        if (item.document) {
+            groupedModules[item.document].push(item);
+        }
     });
 
+    return { groupedModules, symptoms };
 }
 
 async function setData() {
-    await setSymptomElicitationDialogues();
-    await setSymptomsKnowledgeBase();
-    await setPropertyQuickReply();
+    // ! For latest version of the file, Export xlsx file from Google Sheets
+    const path : string = './extra/symptoms-modules.xlsx';
+
+    await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
+    await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
+    await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
+    await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
+    await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
+    await setSymptomsKnowledgeBase(path, 'Symptom Knowledge Base', 'knowledge_base');
 }
 
 export { setData };
