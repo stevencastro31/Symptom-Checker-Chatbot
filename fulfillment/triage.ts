@@ -13,15 +13,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
               switch (property.difficulty) {
                   case 'easy':
                     triageLevels += 2;
-                    impression_cardio+=2;
+                    impression_cardio+=1;
                     break;
                   case 'moderate':
                     triageLevels += 4;
-                    impression_cardio+=4;
+                    impression_cardio+=1;
                     break;
                   case 'hard':
                     triageLevels += 6;
-                    impression_cardio+=6;
+                    impression_cardio+=1;
                     break;
                 }
                 
@@ -34,7 +34,7 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           if(property.has == true)
           switch (property.visibility) {
             case 'clear':
-              triageLevels += 3;
+              triageLevels += 3; 
               break;
             case 'cloudy':
               triageLevels += 5;
@@ -47,15 +47,21 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
     
         case 'cyanosis':
           if(property.has == true)
-          switch (property.difficulty) {
+          switch (property.pain_adjectives) {
             case 'mild':
               triageLevels += 4;
+              impression_cardio+=1;
+              impression_respiratory+=4;
               break;
             case 'moderate':
               triageLevels += 6;
+              impression_cardio+=1;
+              impression_respiratory+=4;
               break;
             case 'severe':
               triageLevels += 8;
+              impression_cardio+=1;
+              impression_respiratory+=4;
               break;
           }
           break;
@@ -65,12 +71,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_explicit) {
             case 'occasional':
               triageLevels += 2;
+              impression_cardio+=2;
               break;
             case 'frequent':
               triageLevels += 4;
+              impression_cardio+=2;
               break;
             case 'constant':
               triageLevels += 6;
+              impression_cardio+=2;
               break;
           }
           break;
@@ -79,10 +88,13 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           if(property.has == true)
           if (parseInt(property.heartrate) >=50 ) {
               triageLevels += 3;
+              impression_cardio+=1;
           } else if (parseInt(property.heartrate) >= 40) {
               triageLevels += 5;
+              impression_cardio+=1;
           } else if (parseInt(property.heartrate) < 40){
               triageLevels += 7;
+              impression_cardio+=1;
           }
           break;
     
@@ -91,12 +103,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.pain_adjectives) {
             case 'dull'&&'ache':
               triageLevels += 4;
+              impression_cardio+=7;
+              impression_respiratory += 5;
               break;
             case 'persistent' && 'ache':
               triageLevels += 6;
+              impression_cardio+=7;
+              impression_respiratory += 5;
               break;
             case 'sharp' || 'stabbing':
               triageLevels += 8;
+              impression_cardio+=7;
+              impression_respiratory += 5;
               break;
           }
           break;
@@ -117,12 +135,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.duration_generic) {
             case 'days':
               triageLevels += 1;
+              impression_respiratory += 3;
               break;
             case 'weeks':
               triageLevels += 3;
+              impression_respiratory += 3;
               break;
             case 'months':
               triageLevels += 5;
+              impression_respiratory += 3;
               break;
           }
           break;
@@ -132,12 +153,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.duration_generic) {
             case 'days':
               triageLevels += 3;
+              impression_cardio+=1;
+              impression_respiratory+=2;
               break;
             case 'weeks':
               triageLevels += 5;
+              impression_cardio+=1;
+              impression_respiratory+=2;
               break;
             case 'months':
               triageLevels += 7;
+              impression_cardio+=1;
+              impression_respiratory+=2;
               break;
           }
           break;
@@ -149,9 +176,11 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
                     switch(property.moisture){
                       case 'wet':
                           triageLevels += 4;
+                          impression_respiratory+=5;
                           break;
                       case 'dry':
                           triageLevels += 2;
+                          impression_respiratory+=5;
                           break;
                     }
                     break;
@@ -159,9 +188,11 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
                   switch(property.moisture){
                     case 'wet':
                       triageLevels += 5;
+                      impression_respiratory+=5;
                       break;
                     case 'dry':
                       triageLevels += 3;
+                      impression_respiratory+=5;
                       break;
                   }
                   break;
@@ -169,9 +200,11 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
                     switch(property.moisture){
                       case 'wet':
                           triageLevels += 6;
+                          impression_respiratory+=5;
                           break;
                       case 'dry':
                           triageLevels += 4;
+                          impression_respiratory+=5;
                           break;
 
                     }
@@ -187,9 +220,11 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
               switch(property.physical_state){
                 case 'activity':
                     triageLevels += 2;
+                    impression_cardio+=6;
                     break;
                   case 'rest':
                     triageLevels += 4;
+                    impression_cardio+=6;
                     break;
               }
               break;
@@ -197,9 +232,11 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
               switch(property.physical_state){
                 case 'activity':
                     triageLevels += 3;
+                    impression_cardio+=6;
                     break;
                   case 'rest':
                       triageLevels += 5;
+                      impression_cardio+=6;
                       break;
               }
               break;
@@ -207,9 +244,11 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
               switch(property.physical_state){
                 case 'activity':
                   triageLevels += 4;
+                  impression_cardio+=6;
                   break;
                   case 'rest':
                       triageLevels += 6;
+                      impression_cardio+=6;
                       break;
               }
           }
@@ -220,12 +259,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.moisture) {
             case 'wet':
               triageLevels += 3;
+              impression_cardio+=2;
+              impression_respiratory+=1;
               break;
             case 'damp':
               triageLevels += 5;
+              impression_cardio+=2;
+              impression_respiratory+=1;
               break;
             case 'drenched':
               triageLevels += 7;
+              impression_cardio+=2;
+              impression_respiratory+=1;
               break;
           }
           break;
@@ -236,27 +281,33 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
             switch(property.trigger_activity){
               case 'activity':
                   triageLevels += 5;
+                  impression_cardio+=4;
                   break;
               case 'rest':
                   triageLevels += 6;
+                  impression_cardio+=4;
                   break;
             }
           } else if (parseInt(property.count) <= 2) {
             switch(property.trigger_activity){
               case 'activity':
                   triageLevels += 6;
+                  impression_cardio+=4;
                   break;
               case 'rest':
                   triageLevels += 8;
+                  impression_cardio+=4;
                   break;
             }
           } else if (parseInt(property.count) > 2){
             switch(property.trigger_activity){
               case 'activity':
                   triageLevels += 8;
+                  impression_cardio+=4;
                   break;
               case 'rest':
                   triageLevels += 10;
+                  impression_cardio+=4;
                   break;
             }
           }
@@ -267,9 +318,13 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.trigger_activity) {
             case'activity':
             triageLevels += 2;
+            impression_cardio += 7;
+            impression_respiratory += 6;
             break;
             case 'rest':
               triageLevels += 6;
+              impression_cardio += 7;
+              impression_respiratory += 6;
               break;
           }
           break;
@@ -278,10 +333,13 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           if(property.has == true)
           if (parseInt(property.temperature_body) >=37.5 && parseInt(property.temperature_body)<= 38 ) {
               triageLevels += 3;
+              impression_respiratory += 2;
           } else if (parseInt(property.temperature_body) >=38.1 && parseInt(property.temperature_body)<= 39) {
               triageLevels += 5;
+              impression_respiratory += 2;
           } else if (parseInt(property.temperature_body) >39){
               triageLevels += 7;
+              impression_respiratory += 2;
           }
           break;
     
@@ -305,42 +363,53 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.difficulty) {
            case 'easy':
               triageLevels += 3;
+              impression_cardio += 1;
+              impression_respiratory+=2;
               break;
           case 'moderate':
               triageLevels += 5;
+              impression_cardio += 1;
+              impression_respiratory+=2;
               break;
          case 'hard':
           triageLevels += 7;
-          break;
+          impression_cardio += 1;
+          impression_respiratory+=2;
           }
           break;
     
         case 'indigestion':
           if(property.has == true)
-          switch (property.frequency_generic) {
-              case 'occasional':
+          switch (property.pain_adjectives) {
+              case 'mild':
                   triageLevels += 2;
+                  impression_cardio += 1;
                   break;
-                case 'frequent':
+                case 'moderate':
                   triageLevels += 4;
+                  impression_cardio += 1;
                   break;
-                case 'constant':
+                case 'severe':
                   triageLevels += 6;
+                  impression_cardio += 1;
                   break;
           }
           break;
     
         case 'loss of appetite':
           if(property.has == true)
-          switch (property.frequency_generic) {
-            case 'occasional':
+          switch (property.pain_adjectives) {
+            case 'mild':
               triageLevels += 2;
+              impression_respiratory+=2;
               break;
-            case 'frequent':
+            case 'moderate':
               triageLevels += 4;
+              impression_respiratory+=2;
               break;
-            case 'constant':
+            case 'severe':
               triageLevels += 6;
+              impression_respiratory+=2;
               break;
           }
           break;
@@ -350,12 +419,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
             switch (property.pain_adjectives) {
                 case 'mild':
                   triageLevels += 3;
+                  impression_respiratory+=1;
                   break;
                 case 'moderate':
                   triageLevels += 5;
+                  impression_respiratory+=1;
                   break;
                 case 'severe':
                   triageLevels += 7;
+                  impression_respiratory+=1;
                   break;
             }
             break;
@@ -365,12 +437,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
             switch (property.pain_adjectives) {
                 case 'mild':
                   triageLevels += 3;
+                  impression_respiratory+=1;
                   break;
                 case 'moderate':
                   triageLevels += 5;
+                  impression_respiratory+=1;
                   break;
                 case 'severe':
                   triageLevels += 7;
+                  impression_respiratory+=1;
                   break;
             }
             break;
@@ -380,12 +455,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
             switch (property.difficulty) {
                 case 'easy':
                   triageLevels += 3;
+                  impression_cardio += 1;
                   break;
                 case 'moderate':
                   triageLevels += 5;
+                  impression_cardio += 1;
                   break;
                 case 'hard':
                   triageLevels += 8;
+                  impression_cardio += 1;
                   break;
             }
             break;
@@ -400,12 +478,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
                     switch (property.pain_adjectives) {
                         case 'mild':
                           triageLevels += 2;
+                          impression_respiratory += 5;
                           break;
                         case 'moderate':
                           triageLevels += 4;
+                          impression_respiratory += 5;
                           break;
                         case 'severe':
                           triageLevels += 6;
+                          impression_respiratory += 5;
                           break;
                     }
                     break;
@@ -413,12 +494,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
                     switch (property.pain_adjectives) {
                         case 'mild':
                           triageLevels += 5;
+                          impression_respiratory += 5;
                           break;
                         case 'moderate':
                           triageLevels += 7;
+                          impression_respiratory += 5;
                           break;
                         case 'severe':
                           triageLevels += 9;
+                          impression_respiratory += 5;
                           break;
                     }
                     break;
@@ -444,12 +528,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_adverbs) {
             case 'occasional':
               triageLevels += 3;
+              impression_cardio += 1;
               break;
             case 'frequent':
               triageLevels += 5;
+              impression_cardio += 1;
               break;
             default:
-              triageLevels += 8; // For severe
+              triageLevels += 8; 
+              impression_cardio += 1;// For severe
           }
           break;
 
@@ -458,12 +545,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.change_quantity) {
             case 'slightly':
               triageLevels += 2;
+              impression_cardio += 1;
               break;
             case 'noticeably':
               triageLevels += 4;
+              impression_cardio += 1;
               break;
             default:
-              triageLevels += 6; // For severe
+              triageLevels += 6; 
+              impression_cardio += 1;// For severe
           }
           break;
 
@@ -472,12 +562,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_adverbs) {
             case 'occasional':
               triageLevels += 3;
+              impression_cardio += 3;
               break;
             case 'frequent':
               triageLevels += 5;
+              impression_cardio += 3;
               break;
             default:
-              triageLevels += 7; // For severe
+              triageLevels += 7;
+              impression_cardio += 3; // For severe
           }
           break;
 
@@ -486,12 +579,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_adverbs) {
             case 'occasional':
               triageLevels += 3;
+              impression_cardio+=3;
+              impression_respiratory+=1;
               break;
             case 'frequent':
               triageLevels += 5;
+              impression_cardio+=3;
+              impression_respiratory+=1;
               break;
             default:
-              triageLevels += 7; // For severe
+              triageLevels += 7;
+              impression_cardio+=3;
+              impression_respiratory+=1; // For severe
           }
           break;
 
@@ -500,12 +599,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.change_quantity) {
             case 'slight':
               triageLevels += 3;
+              impression_respiratory+=2;
+              impression_cardio+=1;
               break;
             case 'persistent':
               triageLevels += 5;
+              impression_respiratory+=2;
+              impression_cardio+=1;
               break;
             default:
-              triageLevels += 7; // For severe
+              triageLevels += 7;
+              impression_respiratory+=2;
+              impression_cardio+=1; // For severe
           }
           break;
 
@@ -514,12 +619,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_adverbs) {
             case 'slightly':
               triageLevels += 3;
+              impression_respiratory+=2;
+              impression_cardio+=1;
               break;
             case 'noticeably':
               triageLevels += 5;
+              impression_respiratory+=2;
+              impression_cardio+=1;
               break;
             default:
-              triageLevels += 8; // For severe
+              triageLevels += 8; 
+              impression_respiratory+=2;
+              impression_cardio+=1;// For severe
           }
           break;
 
@@ -528,12 +639,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.change_quantity) {
             case 'clear':
               triageLevels += 2;
+              impression_respiratory+=1;
+              impression_cardio+=3;
               break;
             case 'colored':
               triageLevels += 4;
+              impression_respiratory+=1;
+              impression_cardio+=3;
               break;
             default:
-              triageLevels += 6; // For severe
+              triageLevels += 6;
+              impression_respiratory+=1;
+              impression_cardio+=3;// For severe
           }
           break;
 
@@ -542,12 +659,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_adverbs) {
             case 'only with exertion':
               triageLevels += 4;
+              impression_respiratory+=5;
+              impression_cardio+=2;
               break;
             case 'occurs with minimal activity':
               triageLevels += 6;
+              impression_respiratory+=5;
+              impression_cardio+=2;
               break;
             default:
-              triageLevels += 8; // For severe
+              triageLevels += 8;
+              impression_respiratory+=5;
+              impression_cardio+=2; // For severe
           }
           break;
 
@@ -556,12 +679,18 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.pain_intensity) {
             case '2':
               triageLevels += 2;
+              impression_respiratory+=1;
+              impression_cardio+=2;
               break;
             case '4':
               triageLevels += 4;
+              impression_respiratory+=1;
+              impression_cardio+=2;
               break;
             default:
-              triageLevels += 6; // For severe
+              triageLevels += 6;
+              impression_respiratory+=1;
+              impression_cardio+=2;// For severe
           }
           break;
 
@@ -570,10 +699,16 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           if (parseInt(property.heartrate) > 100) {
             if (property.heartrate <= 110) {
               triageLevels += 3;
+              impression_respiratory+=2;
+              impression_cardio+=1;
             } else if (property.heartrate <= 130) {
               triageLevels += 5;
+              impression_respiratory+=2;
+              impression_cardio+=1;
             } else {
-              triageLevels += 8; // For very high rates
+              triageLevels += 8;
+              impression_respiratory+=2;
+              impression_cardio+=1; // For very high rates
             }
           }
           break;
@@ -597,12 +732,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.change_quantity) {
             case 'small increase':
               triageLevels += 2;
+              impression_cardio+=1;
               break;
             case 'noticeable increase':
               triageLevels += 4;
+              impression_cardio+=1;
               break;
             default:
-              triageLevels += 6; // For rapid and significant increase
+              triageLevels += 6;
+              impression_cardio+=1; // For rapid and significant increase
           }
           break;
 
@@ -611,12 +749,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.change_quantity) {
             case 'small decrease':
               triageLevels += 2;
+              impression_respiratory+=3;
               break;
             case 'noticeable decrease':
               triageLevels += 4;
+              impression_respiratory+=3;
               break;
             default:
-              triageLevels += 6; // For rapid and significant decrease
+              triageLevels += 6;
+              impression_respiratory+=3; // For rapid and significant decrease
           }
           break;
 
@@ -625,12 +766,15 @@ const userToSeverity = (inputs: { name: string; property: { [key: string]: any }
           switch (property.frequency_adverbs) {
             case 'occasional':
               triageLevels += 3;
+              impression_respiratory+=3;
               break;
             case 'frequent':
               triageLevels += 5;
+              impression_respiratory+=3;
               break;
             default:
-              triageLevels += 7; // For constant
+              triageLevels += 7; 
+              impression_respiratory+=3;// For constant
           }
           break;
     
