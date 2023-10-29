@@ -16,7 +16,6 @@ class ChatManager {
     	this.type = 'default';
     };
 
-    // TODO: Implement language switch w/ knowledge base
     async readMessage(userId: string, message: string) {
         const user = await getUser(userId);
         const lang = user?.settings.language ?? 'english';

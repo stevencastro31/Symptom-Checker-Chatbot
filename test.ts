@@ -12,6 +12,7 @@ import { ChatIntent } from 'enums/intent';
 import { setData } from 'extra/symptom-dialogue';
 import { getChatReply, getSymptomKnowledge } from '@libs/database';
 import { ChatQuickReply } from 'enums/quick_reply';
+import { probeNextSymptom } from '@fulfillment/probing';
 
 const loader = new ExcelLoader();
 
@@ -34,20 +35,26 @@ async function main() {
     // await setData();
     
     // * Update Intents
-    const start = 81;
-    const end = 81;
-    for (let i = start -2; i < end -1; i++) {
-        var intent_en = new Intent(data_en[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-        var intent_tl = new Intent(data_tl[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-        // await intentManager.deleteIntent(intent_en);
-        await intentManager.createIntent(intent_en);
-        // await intentManager.updateIntent(intent_tl);
-    }
+    // const start = 81;
+    // const end = 81;
+    // for (let i = start -2; i < end -1; i++) {
+    //     var intent_en = new Intent(data_en[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+    //     var intent_tl = new Intent(data_tl[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+    //     // await intentManager.deleteIntent(intent_en);
+    //     await intentManager.createIntent(intent_en);
+    //     // await intentManager.updateIntent(intent_tl);
+    // }
 
     // console.log(await getSymptomKnowledge('cough'));
     // console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
     // const response = await getChatResponse(ChatModule.INTRODUCTION, ChatIntent.GREETING, ChatLanguage.ENGLISH);
-    // console.log(response);       
+    // console.log(response);   
+    
+
+    console.log(probeNextSymptom([0, 1, 2, 3, 4]));
+    console.log(probeNextSymptom([1, 3, 2, 3, 1]));
+    console.log(probeNextSymptom([0, 0, 2, 3, 2]));
+    console.log(probeNextSymptom([0, 0, 0, 0, 1]));
 };
 
 main();
