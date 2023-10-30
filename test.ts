@@ -33,17 +33,21 @@ const delimiters = {
 async function main() {
     // * Update Firestore
     // await setData();
-    
+
+
+    // 16-46
+
     // * Update Intents
-    // const start = 81;
-    // const end = 81;
-    // for (let i = start -2; i < end -1; i++) {
-    //     var intent_en = new Intent(data_en[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-    //     var intent_tl = new Intent(data_tl[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
-    //     // await intentManager.deleteIntent(intent_en);
-    //     await intentManager.createIntent(intent_en);
-    //     // await intentManager.updateIntent(intent_tl);
-    // }
+    const start = 16;
+    const end = 46;
+    for (let i = start -2; i < end -1; i++) {
+        var intent_en = new Intent(data_en[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+        var intent_tl = new Intent(data_tl[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
+        // await intentManager.deleteIntent(intent_en);
+        // await intentManager.createIntent(intent_en);
+        // await intentManager.updateIntent(intent_en);
+        await intentManager.updateIntent(intent_tl);
+    }
 
     // console.log(await getSymptomKnowledge('cough'));
     // console.log(await getChatReply('agreement', ChatLanguage.TAGALOG));
@@ -51,10 +55,10 @@ async function main() {
     // console.log(response);   
     
 
-    console.log(probeNextSymptom([0, 1, 2, 3, 4]));
-    console.log(probeNextSymptom([1, 3, 2, 3, 1]));
-    console.log(probeNextSymptom([0, 0, 2, 3, 2]));
-    console.log(probeNextSymptom([0, 0, 0, 0, 1]));
+    // console.log(probeNextSymptom([0, 1, 2, 3, 4]));
+    // console.log(probeNextSymptom([1, 3, 2, 3, 1]));
+    // console.log(probeNextSymptom([0, 0, 2, 3, 2]));
+    // console.log(probeNextSymptom([0, 0, 0, 0, 1]));
 };
 
 main();

@@ -1,4 +1,5 @@
 export enum ChatIntent {
+    // * Introduciton Phase
     GREETING = 'greeting',
     CHECKUP = 'checkup',
     PRIVACY_POLICY_YES = 'privacy_policy_yes',
@@ -9,11 +10,13 @@ export enum ChatIntent {
     LANGUAGE_CHANGE_SUCCESS = 'language_change_success',
     HELP = 'help',
 
+    // * General Questions Phase
     GENERAL = 'general',
     NAME_SET = 'name_set',
     AGE_SET = 'age_set',
     SEX_SET = 'sex_set',
 
+    // * Symptom Elicitation Phase
     ELICITATION = 'elicitation',
     INITIAL_SYMPTOM_SET = 'initial_symptom_set',
 
@@ -51,10 +54,48 @@ export enum ChatIntent {
     PAINKILLERS_YES = 'pain_killers_yes',
     PAINKILLERS_NO = 'pain_killers_no',
 
+    // * Assessment Phase
     ASSESSMENT = 'assessment',
     MINIMAL = 'minimal_triage',
     DELAYED = 'delayed_triage',
     IMMEDIATE = 'immediate_triage',
     EXPECTANT = 'expectant_triage',
     PREASSESSMENT = 'preassessment',
+
+    // * Fallbacks
+    FALLBACK_SYMPTOM = 'fallback',
+    FALLBACK_AGE = 'fallback_age',
+    FALLBACK_CARDIOVASCULAR = 'fallback_cardiovascular',
+    FALLBACK_CHANGE_QUANTITY = 'fallback_change_quantity',
+    FALLBACK_COLOR_PHLEGM = 'fallback_color_phlegm',
+    FALLBACK_COUNT = 'fallback_count',
+    FALLBACK_DIFFICULTY = 'fallback_difficulty',
+    FALLBACK_DURATION_GENERIC = 'fallback_duration_generic',
+    FALLBACK_FREQUENCY_ADVERBS = 'fallback_frequency_adverbs',
+    FALLBACK_HAS = 'fallback_has',
+    FALLBACK_HEARTRATE = 'fallback_heartrate',
+    FALLBACK_INTERFERENCE = 'fallback_interference',
+    FALLBACK_LANGUAGE = 'fallback_language',
+    FALLBACK_LOCATION_EYES = 'fallback_location_eyes',
+    FALLBACK_LOCATION_BODY_LOCALE = 'fallback_location_body_locale',
+    FALLBACK_LOCATION_BODY_REGION = 'fallback_location_body_region',
+    FALLBACK_MOISTURE = 'fallback_moisture',
+    FALLBACK_NAME = 'fallback_name',
+    FALLBACK_PAIN_ADJECTIVES = 'fallback_pain_adjectives',
+    FALLBACK_PAIN_KILLERS = 'fallback_pain_killers',
+    FALLBACK_PARTS_DAY = 'fallback_parts_day',
+    FALLBACK_PHYSICAL = 'fallback_physical',
+    FALLBACK_BLOOD_PRESSURE = 'fallback_blood_pressure',
+    FALLBACK_PRIVACY_POLICY = 'fallback_privacy_policy',
+    FALLBACK_RESPIRATORY = 'fallback_respiratory',
+    FALLBACK_SEX = 'fallback_sex',
+    FALLBACK_INITIAL = 'fallback_initial',
+    FALLBACK_TEMPERATURE_BODY = 'fallback_temperature_body',
+    FALLBACK_TRIGGER_ACTIVITY = 'fallback_trigger_activity',
+    FALLBACK_VISIBILITY = 'fallback_visibility',
+    FALLBACK_WEAKNESS_INTENSITY = 'fallback_weakness_intensity',
+    FALLBACK_WEIGHT = 'fallback_weight',
 };
+
+
+

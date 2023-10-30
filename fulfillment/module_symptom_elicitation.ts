@@ -25,6 +25,7 @@ const module_functions = {
         } else {
             agent.context.set({name: 'INITIAL', lifespan: 0});
             session.flags.initial_flag = false;
+            session.flags.initial_symptom = true;
             session.elicitation.next_subject = agent.parameters.symptom;
 
             triggerEvent(agent, ChatEvent.ELICITATION);
@@ -420,6 +421,24 @@ const module_functions = {
         // Fullfilment Response
         fullfilmentResponse(agent, [], session);
     },
+
+    fallback: async (agent: any) => {
+        // Fullfilment Request
+        const session = await fullfilmentRequest(agent);
+        let response: any[] = [];
+
+        // Fallback Response
+        const property_type = agent.action.replace('fallback_', '');
+        const fallback_responses: any = await getChatResponse(module_name, ChatIntent.FALLBACK_SYMPTOM, session.language);
+        response = response.concat(fallback_responses[property_type]);
+
+        // Add Quick Reply if Available
+        let quick_replies = await getChatReply(property_type, session.language);
+        if (quick_replies) { response = response.concat({quickReplies: quick_replies}); }
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, response, session);
+    },
 };
 
 
@@ -461,6 +480,15 @@ async function symptom_elicitation_flow(agent: any, session: any) {
             session.elicitation.current_questions = knowledge.questions;    
             session.elicitation.current_properties = {};
             session.elicitation.next_subject = knowledge.next ?? null;
+
+            // * Skips Initial Symptom Has Property
+            if (session.flags.initial_symptom) {
+                session.flags.initial_symptom = false;
+                if (session.elicitation.current_questions[0] === 'has') {
+                    session.elicitation.current_questions.shift();
+                    session.elicitation.current_properties.has = true;
+                }
+            }
         }
 
         if (0 < session.elicitation.current_questions.length) {
@@ -502,7 +530,6 @@ function getPropertyContext(property: string) {
         has: ChatContext.HAS,
         heartrate: ChatContext.HEARTRATE,
         interference: ChatContext.INTERFERENCE,
-        intervention: ChatContext.INTERFERENCE,
         location_body_locale: ChatContext.LOCALE,
         location_body_region: ChatContext.REGION,
         location_eyes: ChatContext.EYES,
@@ -517,6 +544,8 @@ function getPropertyContext(property: string) {
         trigger_food: ChatContext.TRIGGER,
         trigger_state: ChatContext.TRIGGER,
         weakness_intensity: ChatContext.WEAKNESS,
+        visibility: ChatContext.VISIBILITY,
+        pain_killers: ChatContext.PAINKILLERS,
         weight: ChatContext.WEIGHT,
     };
     return map[property] ?? 'error';

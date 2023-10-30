@@ -4,6 +4,7 @@ import { ChatModule } from "enums/module"
 import { checkIntroductionFlags, fullfilmentRequest, fullfilmentResponse, triggerEvent } from "./chatbot_functions";
 import { ChatEvent } from "enums/event";
 import { ChatQuickReply } from "enums/quick_reply";
+import { ChatContext } from "enums/context";
 
 const module_name = ChatModule.INTRODUCTION;
 const module_functions = {
@@ -96,6 +97,26 @@ const module_functions = {
             response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_CHANGE, session.language));
             response = response.concat(await getChatResponse(module_name, ChatIntent.LANGUAGE_SET, session.language));
             response = response.concat({quickReplies: await getChatReply(ChatQuickReply.LANGUAGE, session.language)});
+        }
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, response, session);
+    },
+
+    fallback: async (agent: any) => {
+        // Fullfilment Request
+        const session = await fullfilmentRequest(agent);
+        let response: any[] = [];
+
+        // Fallback Response
+        response = response.concat(await getChatResponse(module_name, agent.action, session.language));
+        switch (agent.action) {
+            case ChatIntent.FALLBACK_LANGUAGE:
+                response = response.concat(await getChatReply(ChatQuickReply.LANGUAGE, session.language));
+                break;
+            case ChatIntent.FALLBACK_PRIVACY_POLICY:
+                response = response.concat(await getChatReply(ChatQuickReply.PRIVACY_POLICY, session.language));
+                break;
         }
 
         // Fullfilment Response

@@ -85,6 +85,41 @@ router.post('/webhook/df', (req: Request, res: Response) => {
     handlers.set(ChatIntent.RESPIRATORY_SET, module_symptom_elicitation.respiratory_set);
     handlers.set(ChatIntent.CARDIOVASCULAR_SET, module_symptom_elicitation.cardiovascular_set);
 
+    // Fallback Intents
+    handlers.set(ChatIntent.FALLBACK_LANGUAGE, module_introduction.fallback);
+    handlers.set(ChatIntent.FALLBACK_PRIVACY_POLICY, module_introduction.fallback);
+
+    handlers.set(ChatIntent.FALLBACK_AGE, module_general.fallback);
+    handlers.set(ChatIntent.FALLBACK_NAME, module_general.fallback);
+    handlers.set(ChatIntent.FALLBACK_SEX, module_general.fallback);
+    handlers.set(ChatIntent.FALLBACK_INITIAL, module_general.fallback);
+
+    handlers.set(ChatIntent.FALLBACK_CARDIOVASCULAR, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_CHANGE_QUANTITY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_COLOR_PHLEGM, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_COUNT, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_DIFFICULTY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_DURATION_GENERIC, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_FREQUENCY_ADVERBS, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_HAS, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_HEARTRATE, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_INTERFERENCE, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_LOCATION_EYES, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_LOCATION_BODY_LOCALE, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_LOCATION_BODY_REGION, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_MOISTURE, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_PAIN_ADJECTIVES, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_PAIN_KILLERS, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_PARTS_DAY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_PHYSICAL, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_BLOOD_PRESSURE, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_RESPIRATORY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_TEMPERATURE_BODY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_TRIGGER_ACTIVITY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_VISIBILITY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_WEAKNESS_INTENSITY, module_symptom_elicitation.fallback);
+    handlers.set(ChatIntent.FALLBACK_WEIGHT, module_symptom_elicitation.fallback);
+
     // Assessment
     handlers.set(ChatIntent.ASSESSMENT, module_assessment.assessment);
 

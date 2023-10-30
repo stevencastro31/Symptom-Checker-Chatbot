@@ -4,6 +4,7 @@ import { ChatModule } from "enums/module"
 import { checkGeneralQuestionFlags, fullfilmentRequest, fullfilmentResponse, triggerEvent } from "./chatbot_functions";
 import { ChatEvent } from "enums/event";
 import { ChatQuickReply } from "enums/quick_reply";
+import { ChatContext } from "enums/context";
 
 const module_name = ChatModule.GENERAL_QUESTIONS;
 const module_functions = {
@@ -72,6 +73,27 @@ const module_functions = {
 
             agent.context.set({name: 'SEX', lifespan: 0});
             triggerEvent(agent, ChatEvent.GENERAL);
+        }
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, response, session);
+    },
+
+    fallback: async (agent: any) => {
+        // Fullfilment Request
+        const session = await fullfilmentRequest(agent);
+        let response: any[] = [];
+
+        // Fallback Response
+        console.log('GEN FALL', agent.action);
+        response = response.concat(await getChatResponse(module_name, agent.action, session.language)); 
+        switch (agent.action) {
+            case ChatIntent.FALLBACK_SEX:
+                response = response.concat(await getChatReply(ChatQuickReply.SEX, session.language));
+                break;
+            case ChatIntent.FALLBACK_INITIAL:
+                response = response.concat(await getChatReply(ChatQuickReply.INITIAL, session.language));
+                break;
         }
 
         // Fullfilment Response

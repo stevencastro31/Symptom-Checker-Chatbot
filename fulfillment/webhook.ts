@@ -6,12 +6,15 @@ import { ChatContext } from "enums/context";
 
 async function webhook(agent: any) {
 
+
+    console.log(agent.action);
+
     // const payload = [{content_type: "text", title: '2NE1', payload: '2NE1'}, 
     // {content_type: "text", title: 'BIGBANG', payload: 'BIGBANG'}, 
     // {content_type: "text", title: 'PSY', payload: 'PSY'}]
 
-    agent.context.set({name: 'SESSION', lifespan: 0, parameters: {}});
-    agent.add('SESSION DELETE');
+    // agent.context.set({name: 'SESSION', lifespan: 0, parameters: {}});
+    // agent.add('SESSION DELETE');
 
     // let response: any[] = ['1', '2', '3', {quickReplies: ['4', '5', '6']}, '25'];
     // // let response: any[] = ['1', '2', '3', '25'];
