@@ -9,7 +9,7 @@ import { ChatModule } from 'enums/module';
 import { ChatLanguage } from 'enums/language';
 import { ChatIntent } from 'enums/intent';
 
-import { setData } from 'extra/symptom-dialogue';
+import { setData } from 'models/firestore-manager';
 import { getChatReply, getSession, getSymptomKnowledge, saveSession } from '@libs/database';
 import { ChatQuickReply } from 'enums/quick_reply';
 import { probeNextSymptom } from '@fulfillment/probing';
@@ -32,7 +32,7 @@ const delimiters = {
 
 async function main() {
     // * Update Firestore
-    // await setData();
+    await setData();
 
 
     // 16-46
@@ -62,8 +62,8 @@ async function main() {
 
 
 
-    await saveSession('dialogflow', [{data: '456'}], {});
-    console.log(await getSession('ESgUB9ncgIwtQnm5FWp5'));
+    // await saveSession('dialogflow', [{data: '456'}], {});
+    // console.log(await getSession('ESgUB9ncgIwtQnm5FWp5'));
 
 };
 
