@@ -27,7 +27,7 @@ const delimiters = {
     outputContext: ',',
     parameters: ',',
     events: ',',
-    prompts: ',',
+    prompts: '|',
 };
 
 async function main() {
@@ -38,14 +38,14 @@ async function main() {
     // 16-46
 
     // * Update Intents
-    const start = 16;
-    const end = 46;
+    const start = 75;
+    const end = 75;
     for (let i = start -2; i < end -1; i++) {
         var intent_en = new Intent(data_en[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
         var intent_tl = new Intent(data_tl[i], delimiters, intentManager.getProjectAgentSessionContextPathTemplate());
         // await intentManager.deleteIntent(intent_en);
         // await intentManager.createIntent(intent_en);
-        // await intentManager.updateIntent(intent_en);
+        await intentManager.updateIntent(intent_en);
         await intentManager.updateIntent(intent_tl);
     }
 
