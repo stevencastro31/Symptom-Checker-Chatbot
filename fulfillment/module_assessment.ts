@@ -1,4 +1,4 @@
-import { getChatResponse } from "@libs/database";
+import { getChatResponse, saveSession } from "@libs/database";
 import { ChatIntent } from "enums/intent";
 import { ChatModule } from "enums/module"
 import { fullfilmentRequest, fullfilmentResponse } from "./chatbot_functions";
@@ -21,6 +21,7 @@ async function assessments_flow(agent: any, session: any) {
 
     // Triage Computation
     const triageScore = userToSeverity(session.elicitation.symptoms);
+    let status = 'minimal';
     response = response.concat(await getChatResponse(module_name, ChatIntent.PREASSESSMENT, session.language));
 
     if (triageScore <= 10) {
@@ -29,17 +30,22 @@ async function assessments_flow(agent: any, session: any) {
     
     else if (triageScore <= 20) {
         response = response.concat(await getChatResponse(module_name, ChatIntent.DELAYED, session.language));
+        status = 'delayed';
     }
 
     else if (triageScore <= 30) {
         response = response.concat(await getChatResponse(module_name, ChatIntent.IMMEDIATE, session.language));
+        status = 'immediate';
+
     }
 
     else {
         response = response.concat(await getChatResponse(module_name, ChatIntent.EXPECTANT, session.language));
+        status = 'expectant';
     }
 
     // Save Session
+    await saveSession(session.userid, session.elicitation.symptoms, {score: triageScore, status: status});
 
     // Fullfilment Response
     fullfilmentResponse(agent, response, session);

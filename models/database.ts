@@ -102,7 +102,43 @@ async function getSymptomKnowledge(symptom: string) {
     };
 };
 
-export { getChatResponse, getChatReply, getUser, setUser, updateField, getSymptomKnowledge }
+// * Save Session
+async function saveSession(userid: string, symptoms: Object[], triage: Object) {
+    const session_info = {
+        symptoms: symptoms,
+        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+        userid: userid,
+        triage: triage,
+    };
+    
+    try {
+        const ref = database.collection('sessions').doc();
+        let res = await ref.set(session_info);
+        // console.log(`User [${userid}]: ${res.writeTime}`);
+
+        const id = ref.id;
+        res = await database.collection('users').doc(userid).update({
+            sessions: firebase.firestore.FieldValue.arrayUnion(id),
+        });
+        // console.log(`User [${userid}]: ${res.writeTime}`);
+    } catch (err) {
+        console.log(err);
+    }; 
+};
+
+// * Get Latest Session
+async function getSession(sessionid: string) {
+    try {
+        const doc = await database.collection('sessions').doc(sessionid).get();
+        const data = doc.data();
+        
+        if (data) { return data; }
+    } catch (err) {
+        console.log(err);
+    };   
+};
+
+export { getChatResponse, getChatReply, getUser, setUser, updateField, getSymptomKnowledge, saveSession, getSession }
 
 
 
