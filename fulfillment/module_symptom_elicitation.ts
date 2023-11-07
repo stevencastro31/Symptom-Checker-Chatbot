@@ -5,6 +5,7 @@ import { getChatReply, getChatResponse, getSymptomKnowledge, updateField } from 
 import { checkSymptomElicitationFlags, fullfilmentRequest, fullfilmentResponse, triggerEvent } from "./chatbot_functions";
 import { ChatContext } from "enums/context";
 import { ChatQuickReply } from "enums/quick_reply";
+import { getNextAction } from "./probing";
 
 const module_name = ChatModule.SYMPTOM_ELICITATION;
 const module_functions = {
@@ -26,7 +27,7 @@ const module_functions = {
             agent.context.set({name: 'INITIAL', lifespan: 0});
             session.flags.initial_flag = false;
             session.flags.initial_symptom = true;
-            session.elicitation.next_subject = agent.parameters.symptom;
+            session.elicitation.next_subject.push(agent.parameters.symptom);
 
             triggerEvent(agent, ChatEvent.ELICITATION);
         }
@@ -466,27 +467,36 @@ async function symptom_elicitation_flow(agent: any, session: any) {
     
     else {
         if (session.flags.get_knowledge_flag) {
+
             // * Save Symptom to Session
             if (session.elicitation.current_subject) {
                 session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
-                session.elicitation.current_properties = {};
+                if (!session.flags.end_flag) {
+                    const { end_flag, next_subject } = getNextAction(session);
+                    session.flags.end_flag = end_flag;
+                    session.elicitation.next_subject = next_subject; 
+                }
                 console.log(session.elicitation.symptoms);
             }
 
             // * Fetch Symptom Knowledge Base
-            const knowledge: any = await getSymptomKnowledge(session.elicitation.next_subject);
-            session.elicitation.current_subject = session.elicitation.next_subject;
-            session.elicitation.next_subject = null;
+            const new_subject = session.elicitation.next_subject.shift();
+            const knowledge: any = await getSymptomKnowledge(new_subject);
+            session.elicitation.current_associations = knowledge.associations;
+            session.elicitation.current_subject = new_subject;
             session.elicitation.current_questions = knowledge.questions;    
             session.elicitation.current_properties = {};
-            session.elicitation.next_subject = knowledge.next ?? null;
 
             // * Skips Initial Symptom Has Property
             if (session.flags.initial_symptom) {
-                session.flags.initial_symptom = false;
                 if (session.elicitation.current_questions[0] === 'has') {
                     session.elicitation.current_questions.shift();
                     session.elicitation.current_properties.has = true;
+                    
+                    const { end_flag, next_subject } = getNextAction(session);
+                    session.flags.end_flag = end_flag;
+                    session.elicitation.next_subject = next_subject; 
+                    session.flags.initial_symptom = false;
                 }
             }
         }

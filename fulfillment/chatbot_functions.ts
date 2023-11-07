@@ -88,15 +88,17 @@ async function checkGeneralQuestionFlags(session: any) {
 async function checkSymptomElicitationFlags(session: any) {
     // Raise Flags
     session.flags.initial_flag = session.flags.initial_flag ?? true;
+    session.flags.end_flag = session.flags.end_flag ?? false;
     session.elicitation = session.elicitation ?? {
         current_subject: null,
+        current_associations: [],
         current_properties: {},
         current_questions: [],
-        next_subject: null,
+        next_subject: [],
         symptoms: [],
     };
-    session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && session.elicitation.next_subject !== null;
-    session.flags.end_probing_flag = 0 === session.elicitation.current_questions.length && session.elicitation.next_subject === null;
+    session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && 0 !== session.elicitation.next_subject.length;
+    session.flags.end_probing_flag = 0 === session.elicitation.current_questions.length && 0 === session.elicitation.next_subject.length;
 };
 
 // * Build Quick Reply Payload

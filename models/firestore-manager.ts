@@ -172,11 +172,11 @@ async function setData() {
     // ! For latest version of the file, Export xlsx file from Google Sheets
     const path : string = './symptoms-modules.xlsx';
 
-    // await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
-    // await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
-    // await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
-    // await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
-    // await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
+    await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
+    await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
+    await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
+    await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
+    await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
     await setSymptomsKnowledgeBase(path, 'Symptom Knowledge Base', 'knowledge_base');
 }
 
