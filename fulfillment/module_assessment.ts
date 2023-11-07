@@ -21,6 +21,7 @@ async function assessments_flow(agent: any, session: any) {
 
     // Triage Computation
     const triageScore = userToSeverity(session.elicitation.symptoms);
+    console.log(`Triage Score: ${triageScore}`);
     let status = 'minimal';
     response = response.concat(await getChatResponse(module_name, ChatIntent.PREASSESSMENT, session.language));
 
@@ -45,7 +46,7 @@ async function assessments_flow(agent: any, session: any) {
     }
 
     // Save Session
-    await saveSession(session.userid, session.elicitation.symptoms, {score: triageScore, status: status});
+    await saveSession(session.userid, session.elicitation.symptoms, {score: triageScore, status: status}); // ! Remove comment
 
     // Fullfilment Response
     fullfilmentResponse(agent, response, session);

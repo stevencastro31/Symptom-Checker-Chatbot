@@ -1,13 +1,14 @@
 import { getUser, setUser } from "@libs/database";
 import { Payload } from "dialogflow-fulfillment";
 import { ChatLanguage } from "enums/language";
+import { getSession } from "@libs/database";
 
 function getUserFacebookID(agent: any) {
     const id = agent.session.split('/')[4];
     return 20 < id.length ? 'dialogflow' : id;
 };
 
-function getSession(agent: any) {
+function getSessionParameters(agent: any) {
     const session = agent.context.get('session');
     if (!session) {
         agent.context.set({name: 'SESSION', lifespan: 99, parameters: {}});
@@ -24,7 +25,7 @@ function triggerEvent(agent: any, event: string) {
 
 // * Repetitive Code for Request & Getting Session Data
 async function fullfilmentRequest(agent: any) {
-    const session = getSession(agent);
+    const session = getSessionParameters(agent);
     session.userid = session.userid ?? getUserFacebookID(agent);
     const user: any = await getUser(session.userid);
 
@@ -69,6 +70,9 @@ async function fullfilmentResponse(agent: any, response: any[], session: any) {
 async function checkIntroductionFlags(session: any) {
     const user: any = await getUser(session.userid);
 
+    // Get Previous Session
+    session.previous_session = user.sessions[0] ? await getSession(user.sessions[0]) : null;
+
     // Raise Flags
     session.flags.language_flag = user.settings.language === null;
     session.flags.privacy_policy_flag = user.settings.privacy_policy === false
@@ -95,7 +99,7 @@ async function checkSymptomElicitationFlags(session: any) {
         current_properties: {},
         current_questions: [],
         next_subject: [],
-        symptoms: [],
+        symptoms: {},
     };
     session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && 0 !== session.elicitation.next_subject.length;
     session.flags.end_probing_flag = 0 === session.elicitation.current_questions.length && 0 === session.elicitation.next_subject.length;

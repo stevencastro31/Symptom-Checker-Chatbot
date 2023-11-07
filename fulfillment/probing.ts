@@ -63,44 +63,28 @@ function getNextAction(session: any) {
     const triage_symptoms_threshold = 5;
 
     let { end_flag, initial_symptom } = session.flags;
-    let { current_associations, current_subject, current_properties, next_subject, symptoms } = session.elicitation;
-
+    let { current_associations, current_properties, next_subject, symptoms } = session.elicitation;
     const threshold = triage_symptoms_threshold - (initial_symptom ? 1 : 0);
 
-    // Format current symptoms
-    const current_symptoms = symptoms.reduce((data: any, symptom: any) => {
-        data[symptom.name] = symptom.property;
-        return data;
-    }, {});
-
-    // const current_symptoms = symptoms.map((symptom: any) => symptom.name);
     const associations: string[] = current_associations;
 
     // TODO: Recall Symptoms from Previous Session
     // ? Separate Normal Symptoms Dialogue from Recall Symptoms Dialogue?
-    if (session.previous_session) {
-        for (const symptom of session.previous_session.symptoms) {
-            // Push if the User Previously has the Symptom and Count Doesn't Exceed Threshold
-            if (symptom.property.has && (symptoms.length + next_subject.length + 1 <= threshold)) {
-                // TODO: Edit What Gets Pushed Here
-                next_subject.push(symptom.name)
-            }
-        }
-    }
+    if (session.previous_session) {}
 
     // * Check and Update Next Subject if Needed
     for (const association of associations) {
-        if (!next_subject.includes(association) && !current_symptoms.hasOwnProperty(association)) {
+        if (!next_subject.includes(association) && !symptoms.hasOwnProperty(association)) {
             // Push if User has the Latest Symptom and Count Doesn't Exceed Threshold
-            if (current_properties.has && (symptoms.length + next_subject.length + 1 <= threshold)) {
-
+            if ((current_properties.has) && (Object.keys(symptoms).length + next_subject.length + 1 <= threshold)) {
+                
                 next_subject.push(association);
             }
         }
     }
-
+    
     // * Check if Threshold has been Reached
-    if (Object.keys(current_symptoms).length + 1 >= threshold) {
+    if (Object.keys(symptoms).length + 1 >= threshold) {
         return { end_flag: true, next_subject: next_subject.slice(0, 2) };
     }
 
@@ -108,4 +92,3 @@ function getNextAction(session: any) {
     return { end_flag, next_subject };
 }
 export { probeNextSymptom, getNextAction };
-

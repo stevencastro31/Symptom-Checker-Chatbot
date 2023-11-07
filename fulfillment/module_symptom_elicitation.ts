@@ -457,7 +457,9 @@ async function symptom_elicitation_flow(agent: any, session: any) {
 
     else if (session.flags.end_probing_flag) {
         // Final Symptom
-        session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
+
+        session.elicitation.symptoms[session.elicitation.current_subject] = session.elicitation.current_properties;
+        // session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
         session.elicitation.current_properties = {};
         session.elicitation.current_subject = null;
 
@@ -470,7 +472,8 @@ async function symptom_elicitation_flow(agent: any, session: any) {
 
             // * Save Symptom to Session
             if (session.elicitation.current_subject) {
-                session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
+                session.elicitation.symptoms[session.elicitation.current_subject] = session.elicitation.current_properties;
+                // session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
                 if (!session.flags.end_flag) {
                     const { end_flag, next_subject } = getNextAction(session);
                     session.flags.end_flag = end_flag;
@@ -514,7 +517,8 @@ async function symptom_elicitation_flow(agent: any, session: any) {
         } 
         
         else {
-            session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
+            session.elicitation.symptoms[session.elicitation.current_subject] = session.elicitation.current_properties;
+            // session.elicitation.symptoms.push({name: session.elicitation.current_subject, property: session.elicitation.current_properties});
             session.elicitation.current_properties = {};
 
             triggerEvent(agent, ChatEvent.ELICITATION);
