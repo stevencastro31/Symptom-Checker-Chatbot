@@ -1,7 +1,6 @@
-import { getUser, setUser } from "@libs/database";
+import { getUser, setUser, getSession, getDiseaseKnowledge } from "@libs/database";
 import { Payload } from "dialogflow-fulfillment";
 import { ChatLanguage } from "enums/language";
-import { getSession } from "@libs/database";
 
 function getUserFacebookID(agent: any) {
     const id = agent.session.split('/')[4];
@@ -73,6 +72,9 @@ async function checkIntroductionFlags(session: any) {
     // Get Previous Session
     session.previous_session = user.sessions[0] ? await getSession(user.sessions[0]) : null;
 
+    // Get Disease Weights
+    session.disease_knowledge_base = await getDiseaseKnowledge();
+
     // Raise Flags
     session.flags.language_flag = user.settings.language === null;
     session.flags.privacy_policy_flag = user.settings.privacy_policy === false
@@ -100,9 +102,10 @@ async function checkSymptomElicitationFlags(session: any) {
         current_questions: [],
         next_subject: [],
         symptoms: {},
+        vector: Array(41).fill(0)
     };
     session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && 0 !== session.elicitation.next_subject.length;
-    session.flags.end_probing_flag = 0 === session.elicitation.current_questions.length && 0 === session.elicitation.next_subject.length;
+    session.flags.end_probing_flag = session.flags.end_probing_flag ?? false;
 };
 
 // * Build Quick Reply Payload

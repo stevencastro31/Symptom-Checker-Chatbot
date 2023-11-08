@@ -102,6 +102,18 @@ async function getSymptomKnowledge(symptom: string) {
     };
 };
 
+// * Fetch Disease Weights
+async function getDiseaseKnowledge() {
+    try {
+        const doc = await database.collection(ChatModule.KNOWLEDGE_BASE).doc('diseases').get();
+        const data = doc.data();
+        
+        return data ? data : null;
+    } catch (err) {
+        console.log(err);
+    };
+}
+
 // * Save Session
 async function saveSession(userid: string, symptoms: Object[], triage: Object) {
     const session_info = {
@@ -138,7 +150,7 @@ async function getSession(sessionid: string) {
     };   
 };
 
-export { getChatResponse, getChatReply, getUser, setUser, updateField, getSymptomKnowledge, saveSession, getSession }
+export { getChatResponse, getChatReply, getUser, setUser, updateField, getSymptomKnowledge, saveSession, getSession, getDiseaseKnowledge }
 
 
 

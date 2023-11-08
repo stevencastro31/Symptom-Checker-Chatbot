@@ -1,6 +1,7 @@
 import ExcelLoader from '@libs/excel-loader';
 import firebase from "firebase-admin";
 import dotenv from 'dotenv';
+import xlsx from 'xlsx';
 dotenv.config();
 
 const credential: Object = JSON.parse(process.env.SERVICE_ACCOUNT ?? "");
@@ -168,16 +169,53 @@ function groupModuleByDocument(data: Object[]) {
     return { grouped_modules, symptoms };
 }
 
+// * Association
+async function setAssociation(path_name: string, sheet_name: string, collectionid: string) {
+    const workbook = xlsx.readFile(path_name);
+    
+    const headers: string[] = ['User', 'symptoms', 'asthma', 'emphysema', 'bronchitis', 'pneumonia', 'tuberculosis', 'covid_19', 'cardiomyopathy', 'hypertension', 'hypotension', 'valvular_heart_disease', 'coronary_artery_disease', 'myocardial_infarction', 'Max', 'U. Wgt'];
+    const excluded: string[] = ['User', 'Max', 'U. Wgt'];
+
+    const worksheet: any[] = xlsx.utils.sheet_to_json(workbook.Sheets[sheet_name], { defval: 0, header: headers });
+
+    const symptoms: string[] = [];
+    const data: any = {}
+    const weights: any = [];
+
+    for (let header of headers) {
+        if (excluded.includes(header)) continue;
+
+        const vector: any[] = [];
+
+        for (let i = 3; i <= 43; i++) {
+            if (header === 'symptoms') { symptoms.push(worksheet[i][header]); }
+            else { vector.push(worksheet[i][header]); }
+        }
+
+        if (header === 'symptoms') continue;
+
+        const disease_weight = { name: header, vector: vector }
+        weights.push(disease_weight);
+    }
+
+    data['threshold'] = 0.75;
+    data['weights'] = weights;
+    data['symptoms'] = symptoms;
+
+    await updateFirestore(collectionid, 'diseases', data);
+    
+}
 async function setData() {
     // ! For latest version of the file, Export xlsx file from Google Sheets
     const path : string = './symptoms-modules.xlsx';
 
-    await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
-    await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
-    await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
-    await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
-    await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
-    await setSymptomsKnowledgeBase(path, 'Symptom Knowledge Base', 'knowledge_base');
+    setAssociation(path, 'Association', 'knowledge_base');
+    // await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
+    // await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
+    // await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
+    // await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
+    // await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
+    // await setSymptomsKnowledgeBase(path, 'Symptom Knowledge Base', 'knowledge_base');
 }
 
 export { setData };

@@ -1,40 +1,51 @@
 import cosinesim from 'compute-cosine-similarity';
 
 // TODO: Fetch this Data from DB/KB
-const disease_knowledge_base: any = {
-    threshold: 0.75,
-    weights: [
-        {
-            name: 'asthma',
-            vector: [2, 2, 0, 1, 2],
-        },
-        {
-            name: 'hypertension',
-            vector: [0, 3, 2, 1, 2],
-        },
-    ],
-    symptoms: ['fever', 'cough', 'headache', 'anosmia', 'fatigue'],
-}
+// const disease_knowledge_base: any = {
+//     threshold: 0.75,
+//     weights: [
+//         {
+//             name: 'asthma',
+//             vector: [2, 2, 0, 1, 2],
+//         },
+//         {
+//             name: 'hypertension',
+//             vector: [0, 3, 2, 1, 2],
+//         },
+//     ],
+//     symptoms: ['fever', 'cough', 'headache', 'anosmia', 'fatigue'],
+// }
 
-const THRESHOLD = disease_knowledge_base.threshold;
-const WEIGHTS = disease_knowledge_base.weights;
-const SYMPTOMS = disease_knowledge_base.symptoms
+// const THRESHOLD = disease_knowledge_base.threshold;
+// const WEIGHTS = disease_knowledge_base.weights;
+// const SYMPTOMS = disease_knowledge_base.symptoms
 
 
 // * Compute Similarity Scores & Return the Highest Candidate
-function getDiseaseCandidate(user_vector: number[]) {
+function getDiseaseCandidate(session: any) {
+    const user_vector: number[] = session.elicitation.vector;
+    const WEIGHTS = session.disease_knowledge_base.weights;
     const similarity_scores: any = []
     WEIGHTS.forEach((disease: { name: string, vector: number[] }) => {
-        similarity_scores.push(cosinesim(user_vector, disease.vector));
+        similarity_scores.push(Number(cosinesim(user_vector, disease.vector)?.toFixed(4)));
     });
 
+    
+
     const index = similarity_scores.indexOf(Math.max(...similarity_scores));
+
+    console.log(similarity_scores, index);
     return { name: WEIGHTS[index].name, score: similarity_scores[index], index: index };
 };
 
 // * Find the Next Symptom Candidate of a Disease or end w/ an impression
-function probeNextSymptom(user_vector: number[]) {
-    const disease = getDiseaseCandidate(user_vector);
+function probeNextSymptom(session: any) {
+    const user_vector: number[] = session.elicitation.vector;
+    const THRESHOLD = session.disease_knowledge_base.threshold;
+    const WEIGHTS = session.disease_knowledge_base.weights;
+    const SYMPTOMS = session.disease_knowledge_base.symptoms;
+
+    const disease = getDiseaseCandidate(session);
 
     // Probe Symptom
     if (disease.score < THRESHOLD) {
@@ -45,17 +56,32 @@ function probeNextSymptom(user_vector: number[]) {
         // * Get Unreported Symptom with the Highest Weight
         for (let i = 0; i < user_vector.length; i++) {
             if (user_vector[i] === 0 && weight < WEIGHTS[disease.index].vector[i]) {
+                console.log(WEIGHTS[disease.index].name);
                 candidate = SYMPTOMS[i];
                 weight = WEIGHTS[disease.index].vector[i];
                 index = i;
             }
         }
+        console.log(candidate)
         if (candidate) { return { action: 'probe', next: candidate, index: index, weight: weight, suspect: disease.name }; }
     }
 
     // Impression
     return { action: 'impression', next: disease.name };
 };
+
+// * Check Other Conditions
+function checkOtherConditions(association: string, current_subject: string, current_symptoms: any) {
+
+    // refer to test.js
+    const conditionsToCheck = ['weightgain', 'weightloss', 'bradycardia', 'tachycardia'];
+
+    if (conditionsToCheck.includes(association)) {
+        
+    }
+
+    return false;
+}
 
 // * Get the Next Action Based on Current Subject
 function getNextAction(session: any) {
@@ -70,7 +96,16 @@ function getNextAction(session: any) {
 
     // TODO: Recall Symptoms from Previous Session
     // ? Separate Normal Symptoms Dialogue from Recall Symptoms Dialogue?
-    if (session.previous_session) {}
+    // if (session.previous_session) {
+    //     for (const symptom of session.previous_session.symptoms) {
+    //         // Push if the User Previously has the Symptom and Count Doesn't Exceed Threshold
+    //         if (symptom.property.has && (symptoms.length + next_subject.length + 1 <= threshold)) {
+    //             // TODO: Edit What Gets Pushed Here
+    //             next_subject.push(symptom.name)
+    //         }
+    //     }
+    // }
+
 
     // * Check and Update Next Subject if Needed
     for (const association of associations) {
@@ -78,6 +113,8 @@ function getNextAction(session: any) {
             // Push if User has the Latest Symptom and Count Doesn't Exceed Threshold
             if ((current_properties.has) && (Object.keys(symptoms).length + next_subject.length + 1 <= threshold)) {
                 
+                // if (!checkOtherConditions(association, current_subject, current_symptoms)) {
+                // }
                 next_subject.push(association);
             }
         }
