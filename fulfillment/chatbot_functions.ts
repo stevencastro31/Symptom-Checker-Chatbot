@@ -76,6 +76,7 @@ async function checkIntroductionFlags(session: any) {
     session.disease_knowledge_base = await getDiseaseKnowledge();
 
     // Raise Flags
+    session.flags.end = session.flags.end ?? false;
     session.flags.language_flag = user.settings.language === null;
     session.flags.privacy_policy_flag = user.settings.privacy_policy === false
 };
@@ -105,7 +106,7 @@ async function checkSymptomElicitationFlags(session: any) {
         vector: Array(41).fill(0)
     };
     session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && 0 !== session.elicitation.next_subject.length;
-    session.flags.end_probing_flag = session.flags.end_probing_flag ?? false;
+    session.flags.assessment_flag = session.flags.assessment_flag ?? false;
 };
 
 // * Build Quick Reply Payload
@@ -122,4 +123,9 @@ function createPayload(quickReplies: string[]) {
     return payload;
 };
 
-export { checkIntroductionFlags, checkGeneralQuestionFlags, checkSymptomElicitationFlags, triggerEvent, fullfilmentRequest, fullfilmentResponse }
+// * Queues the Chatbot to speak lines of dialogue stored in an array
+function say(dialogues: any[], lines: string[]) {
+    lines.forEach((line: string) => { dialogues.push(line); });
+};
+
+export { checkIntroductionFlags, checkGeneralQuestionFlags, checkSymptomElicitationFlags, triggerEvent, fullfilmentRequest, fullfilmentResponse, say }

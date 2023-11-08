@@ -1,7 +1,7 @@
 import { getChatResponse, saveSession } from "@libs/database";
 import { ChatIntent } from "enums/intent";
 import { ChatModule } from "enums/module"
-import { fullfilmentRequest, fullfilmentResponse } from "./chatbot_functions";
+import { fullfilmentRequest, fullfilmentResponse, say } from "./chatbot_functions";
 import { userToSeverity } from "./triage";
 
 const module_name = ChatModule.ASSESSMENT;
@@ -9,47 +9,42 @@ const module_functions = {
     assessment: async (agent: any) => {
         // Fullfilment Request
         const session = await fullfilmentRequest(agent);
+        let response: any[] = [];
 
-        await assessments_flow(agent, session);
+        await assessments_flow(agent, response, session);
+
+        // Fullfilment Response
+        fullfilmentResponse(agent, response, session);
     },
 };
 
-// * Module Flow
-async function assessments_flow(agent: any, session: any) {
-    // Fullfilment Request
-    let response: any[] = [];
-
+// * Main Flow of the Assessment Phase.
+async function assessments_flow(agent: any, response: any, session: any) {
     // Triage Computation
-    const triageScore = userToSeverity(session.elicitation.symptoms);
-    console.log(`Triage Score: ${triageScore}`);
-    let status = 'minimal';
-    response = response.concat(await getChatResponse(module_name, ChatIntent.PREASSESSMENT, session.language));
+    const score = userToSeverity(session.elicitation.symptoms);
+    const status = getStatusName(score);
 
-    if (triageScore <= 10) {
-        response = response.concat(await getChatResponse(module_name, ChatIntent.MINIMAL, session.language));
-    }
-    
-    else if (triageScore <= 20) {
-        response = response.concat(await getChatResponse(module_name, ChatIntent.DELAYED, session.language));
-        status = 'delayed';
-    }
-
-    else if (triageScore <= 30) {
-        response = response.concat(await getChatResponse(module_name, ChatIntent.IMMEDIATE, session.language));
-        status = 'immediate';
-
-    }
-
-    else {
-        response = response.concat(await getChatResponse(module_name, ChatIntent.EXPECTANT, session.language));
-        status = 'expectant';
+    say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.PREASSESSMENT, session.language));
+    switch (status) {
+        case 'minimal': say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.MINIMAL, session.language));
+            break;
+        case 'delayed': say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.DELAYED, session.language));
+            break;
+        case 'immediate': say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.IMMEDIATE, session.language));
+            break;
+        case 'expectant': say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.IMMEDIATE, session.language));
     }
 
     // Save Session
-    await saveSession(session.userid, session.elicitation.symptoms, {score: triageScore, status: status}); // ! Remove comment
+    await saveSession(session.userid, session.elicitation.symptoms, {score, status});
+};
 
-    // Fullfilment Response
-    fullfilmentResponse(agent, response, session);
+// * Gives official triage term based on triage score.
+function getStatusName(score: number) {
+    if (score <= 10) { return 'minimal'; }
+    if (score <= 20) { return 'delayed'; }
+    if (score <= 30) { return 'immediate'; }
+    return 'expectant';
 };
 
 export default module_functions;
