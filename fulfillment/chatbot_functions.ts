@@ -70,7 +70,8 @@ async function checkIntroductionFlags(session: any) {
     const user: any = await getUser(session.userid);
 
     // Get Previous Session
-    session.previous_session = user.sessions[0] ? await getSession(user.sessions[0]) : null;
+    if (!user.sessions.length) { session.previous_session = {} }
+    else { session.previous_session = await getSession(user.sessions[user.sessions.length - 1]) }
 
     // Get Disease Weights
     session.disease_knowledge_base = await getDiseaseKnowledge();
@@ -94,8 +95,10 @@ async function checkGeneralQuestionFlags(session: any) {
 // * Set Symptom Elicitation Module Flags
 async function checkSymptomElicitationFlags(session: any) {
     // Raise Flags
+    session.flags.recall_flag = session.flags.recall_flag ?? Object.keys(session.previous_session).length !== 0;
+    session.flags.recall_ended = session.flags.recall_ended ?? false;
     session.flags.initial_flag = session.flags.initial_flag ?? true;
-    session.flags.end_flag = session.flags.end_flag ?? false;
+    session.flags.initial_fetch_completed = session.flags.initial_fetch_completed ?? false;
     session.elicitation = session.elicitation ?? {
         current_subject: null,
         current_associations: [],
@@ -103,6 +106,7 @@ async function checkSymptomElicitationFlags(session: any) {
         current_questions: [],
         next_subject: [],
         symptoms: {},
+        previous_weights: {},
         vector: Array(41).fill(0)
     };
     session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && 0 !== session.elicitation.next_subject.length;

@@ -1,26 +1,5 @@
 import cosinesim from 'compute-cosine-similarity';
 
-// TODO: Fetch this Data from DB/KB
-// const disease_knowledge_base: any = {
-//     threshold: 0.75,
-//     weights: [
-//         {
-//             name: 'asthma',
-//             vector: [2, 2, 0, 1, 2],
-//         },
-//         {
-//             name: 'hypertension',
-//             vector: [0, 3, 2, 1, 2],
-//         },
-//     ],
-//     symptoms: ['fever', 'cough', 'headache', 'anosmia', 'fatigue'],
-// }
-
-// const THRESHOLD = disease_knowledge_base.threshold;
-// const WEIGHTS = disease_knowledge_base.weights;
-// const SYMPTOMS = disease_knowledge_base.symptoms
-
-
 // * Compute Similarity Scores & Return the Highest Candidate
 function getDiseaseCandidate(session: any) {
     const user_vector: number[] = session.elicitation.vector;
@@ -30,11 +9,7 @@ function getDiseaseCandidate(session: any) {
         similarity_scores.push(Number(cosinesim(user_vector, disease.vector)?.toFixed(4)));
     });
 
-    
-
     const index = similarity_scores.indexOf(Math.max(...similarity_scores));
-
-    console.log(similarity_scores, index);
     return { name: WEIGHTS[index].name, score: similarity_scores[index], index: index };
 };
 
@@ -62,70 +37,14 @@ function probeNextSymptom(session: any) {
                 index = i;
             }
         }
-        console.log(candidate)
-        if (candidate) { return { action: 'probe', next: candidate, index: index, weight: weight, suspect: disease.name }; }
+
+        if (candidate) { 
+            return { action: 'probe', next: candidate, index: index, weight: weight, suspect: disease.name }; 
+        }
     }
 
     // Impression
     return { action: 'impression', next: disease.name };
 };
 
-// * Check Other Conditions
-function checkOtherConditions(association: string, current_subject: string, current_symptoms: any) {
-
-    // refer to test.js
-    const conditionsToCheck = ['weightgain', 'weightloss', 'bradycardia', 'tachycardia'];
-
-    if (conditionsToCheck.includes(association)) {
-        
-    }
-
-    return false;
-}
-
-// * Get the Next Action Based on Current Subject
-function getNextAction(session: any) {
-    // TODO: Define threshold (may be fetched from kb). Separated for easier access.
-    const triage_symptoms_threshold = 5;
-
-    let { end_flag, initial_symptom } = session.flags;
-    let { current_associations, current_properties, next_subject, symptoms } = session.elicitation;
-    const threshold = triage_symptoms_threshold - (initial_symptom ? 1 : 0);
-
-    const associations: string[] = current_associations;
-
-    // TODO: Recall Symptoms from Previous Session
-    // ? Separate Normal Symptoms Dialogue from Recall Symptoms Dialogue?
-    // if (session.previous_session) {
-    //     for (const symptom of session.previous_session.symptoms) {
-    //         // Push if the User Previously has the Symptom and Count Doesn't Exceed Threshold
-    //         if (symptom.property.has && (symptoms.length + next_subject.length + 1 <= threshold)) {
-    //             // TODO: Edit What Gets Pushed Here
-    //             next_subject.push(symptom.name)
-    //         }
-    //     }
-    // }
-
-
-    // * Check and Update Next Subject if Needed
-    for (const association of associations) {
-        if (!next_subject.includes(association) && !symptoms.hasOwnProperty(association)) {
-            // Push if User has the Latest Symptom and Count Doesn't Exceed Threshold
-            if ((current_properties.has) && (Object.keys(symptoms).length + next_subject.length + 1 <= threshold)) {
-                
-                // if (!checkOtherConditions(association, current_subject, current_symptoms)) {
-                // }
-                next_subject.push(association);
-            }
-        }
-    }
-    
-    // * Check if Threshold has been Reached
-    if (Object.keys(symptoms).length + 1 >= threshold) {
-        return { end_flag: true, next_subject: next_subject.slice(0, 2) };
-    }
-
-    // * Return Next Action
-    return { end_flag, next_subject };
-}
-export { probeNextSymptom, getNextAction };
+export { probeNextSymptom };

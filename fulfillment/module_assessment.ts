@@ -36,7 +36,7 @@ async function assessments_flow(agent: any, response: any, session: any) {
     }
 
     // Save Session
-    await saveSession(session.userid, session.elicitation.symptoms, {score, status});
+    // await saveSession(session.userid, session.elicitation.symptoms, {score, status});
 };
 
 // * Gives official triage term based on triage score.

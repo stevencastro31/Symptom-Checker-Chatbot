@@ -1,12 +1,11 @@
 import { ChatIntent } from "enums/intent";
 import { ChatModule } from "enums/module"
 import { ChatEvent } from "enums/event";
-import { getChatReply, getChatResponse, getSymptomKnowledge, saveSession } from "@libs/database";
+import { getChatReply, getChatResponse, getSymptomKnowledge } from "@libs/database";
 import { checkSymptomElicitationFlags, fullfilmentRequest, fullfilmentResponse, say, triggerEvent } from "./chatbot_functions";
 import { ChatContext } from "enums/context";
 import { ChatQuickReply } from "enums/quick_reply";
-import { getNextAction, probeNextSymptom } from "./probing";
-import { userToSeverity } from "./triage";
+import { probeNextSymptom } from "./probing";
 
 const module_name = ChatModule.SYMPTOM_ELICITATION;
 const module_functions = {
@@ -303,6 +302,30 @@ const module_functions = {
 async function symptom_elicitation_flow(agent: any, response: any[], session: any) {
     // * Check Flags
     await checkSymptomElicitationFlags(session);
+    // * Recall Action
+    if (session.flags.recall_flag) {
+        // Compare Previous Session Time to Current Time
+        const previous_date = new Date(session.previous_session.timestamp._seconds * 1000);
+        const current_date = new Date();
+        const difference_in_hours = Math.round((current_date.getTime() - previous_date.getTime()) / (1000 * 3600));
+        const threshold = 18; // ! Current Threshold is 18 Hours
+
+        // if (difference_in_hours > threshold) {
+        if (true) { // ! Only for Testing
+            // Save Previous Symptoms the User had to Next Subject Array
+            for (const symptom in session.previous_session.symptoms) {
+                if (session.previous_session.symptoms[symptom].has) {
+                    session.elicitation.next_subject.push(symptom);
+                    session.elicitation.previous_weights[symptom] = session.previous_session.symptoms[symptom].impression_weight;
+                }
+            }
+
+            // Skip Initial Symptom and Get Symptom Knowledge
+            if (session.elicitation.next_subject.length) { 
+                session.flags.initial_flag = false;
+            }
+        }
+    }
 
     // * Initial Symptom Dialogue Action
     if (session.flags.initial_flag) {
@@ -314,11 +337,20 @@ async function symptom_elicitation_flow(agent: any, response: any[], session: an
         return;
     } 
 
-    // * Fetch Knowledge Base
-    if (session.flags.get_knowledge_flag) {
+    // * Fetch Knowledge Base for Initial Symptom Set
+    if (session.flags.get_knowledge_flag && !session.flags.initial_fetch_completed) {
         await fetchKnowledgeBase(session);
+        session.flags.initial_fetch_completed = true;
+        session.flags.recall_ended = true;
     }
 
+    // * Fetch Knowledge Base for Initial Recall
+    if (session.flags.recall_flag) {
+        await fetchKnowledgeBase(session);
+        session.flags.initial_fetch_completed = true;
+        session.flags.recall_flag = false;
+    }
+    
     // * Symptom Elicitation Dialogue Action | Asks Property Questions w/ Quick Reply if Available
     if (0 < session.elicitation.current_questions.length) {
         const question_type = session.elicitation.current_questions.shift();
@@ -333,28 +365,58 @@ async function symptom_elicitation_flow(agent: any, response: any[], session: an
     } 
     
     else {
-        // Save Session
-        session.elicitation.symptoms[session.elicitation.current_subject] = session.elicitation.current_properties;
-        console.log('Saving', session.elicitation.symptoms);
 
-        // Probe Impression 
+        // Prepare Index and Weight for Impression Probing
         let vector_index = session.elicitation.index ?? session.disease_knowledge_base.symptoms.indexOf(session.elicitation.current_subject);
-        let symptom_weight = session.elicitation.weight ?? 1;
+        let symptom_weight = (!session.flags.recall_ended) ? session.elicitation.previous_weights[session.elicitation.current_subject] : (session.elicitation.weight ?? 1);
         symptom_weight = (session.elicitation.current_properties.has) ? symptom_weight : -1;            
         session.elicitation.vector[vector_index] = symptom_weight;
 
-        const { action, next, index, weight } = probeNextSymptom(session);
-        session.elicitation.index = index;
-        session.elicitation.weight = weight;
-        session.elicitation.next_subject.push(next);
+        // Log Symptom
+        session.elicitation.symptoms[session.elicitation.current_subject] = session.elicitation.current_properties;
+        session.elicitation.symptoms[session.elicitation.current_subject].impression_weight = symptom_weight;
+        console.log('Logging', session.elicitation.symptoms);
 
-        // Set Flags & Reset
-        session.flags.assessment_flag = action === 'impression' && true; // TODO: Mark > Swap True to a Triage Condition (If Both True Transition to Assessment Phase)
-        session.elicitation.current_properties = {};
+        if (!session.elicitation.next_subject.length && !session.flags.recall_ended) { session.flags.recall_ended = true; }
+
+        // Probe Next Symptom
+        if (session.flags.recall_ended) {
+            const { action, next, index, weight } = probeNextSymptom(session);
+            session.elicitation.index = index;
+            session.elicitation.weight = weight;
+
+            // Set Flags & Reset
+            const triage_threshold_reached = (Object.keys(session.elicitation.symptoms).length + 1) > 5; // ! Current Triage Threshold is 5
+            session.flags.assessment_flag = action === 'impression' && triage_threshold_reached;
+            session.elicitation.current_properties = {};
+    
+            // Some condition (don't push disease name) ??? not final
+            if (!session.flags.assessment_flag) {
+                for (const association of session.elicitation.current_associations) {
+                    if (session.elicitation.next_subject.includes(association)) continue;
+                    if (session.elicitation.symptoms.hasOwnProperty(association)) continue;
+                    if (!session.elicitation.symptoms[session.elicitation.current_subject].has) continue;
+                    if (triage_threshold_reached) continue;
+                    session.elicitation.next_subject.push(association);
+                    
+                }
+
+                // Unshift when Impression is Not Yet Complete
+                if (action !== 'impression') {
+                    const misplaced_subject = session.elicitation.next_subject.indexOf(next);
+                    if (misplaced_subject !== -1) { session.elicitation.next_subject.splice(misplaced_subject, 1) }
+                    session.elicitation.next_subject.unshift(next);
+                }
+            }
+        }
+        // console.log(`Next Subject: [${session.elicitation.next_subject}]`);
     }    
 
     // * Transition to Assessment Phase
     if (session.flags.assessment_flag) {
+
+
+        
         triggerEvent(agent, ChatEvent.ASSESSMENT);
         return;
     } 
@@ -381,7 +443,7 @@ async function property_intent_flow(agent: any, operation: (response: any, sessi
 async function fetchKnowledgeBase(session: any) {
     const new_subject = session.elicitation.next_subject.shift();
     const knowledge: any = await getSymptomKnowledge(new_subject);
-    // session.elicitation.current_associations = knowledge.associations;
+    session.elicitation.current_associations = knowledge.associations;
     session.elicitation.current_subject = new_subject;
     session.elicitation.current_questions = knowledge.questions;    
     session.elicitation.current_properties = {};
