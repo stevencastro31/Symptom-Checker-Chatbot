@@ -365,7 +365,6 @@ async function symptom_elicitation_flow(agent: any, response: any[], session: an
     } 
     
     else {
-
         // Prepare Index and Weight for Impression Probing
         let vector_index = session.elicitation.index ?? session.disease_knowledge_base.symptoms.indexOf(session.elicitation.current_subject);
         let symptom_weight = (!session.flags.recall_ended) ? session.elicitation.previous_weights[session.elicitation.current_subject] : (session.elicitation.weight ?? 1);
@@ -386,37 +385,37 @@ async function symptom_elicitation_flow(agent: any, response: any[], session: an
             session.elicitation.weight = weight;
 
             // Set Flags & Reset
-            const triage_threshold_reached = (Object.keys(session.elicitation.symptoms).length + 1) > 5; // ! Current Triage Threshold is 5
+            const triage_threshold_reached = (Object.keys(session.elicitation.symptoms).length + 1) > 10; // ! Current Triage Threshold is 10
             session.flags.assessment_flag = action === 'impression' && triage_threshold_reached;
             session.elicitation.current_properties = {};
     
-            // Some condition (don't push disease name) ??? not final
             if (!session.flags.assessment_flag) {
+                // Handle Associations
                 for (const association of session.elicitation.current_associations) {
                     if (session.elicitation.next_subject.includes(association)) continue;
                     if (session.elicitation.symptoms.hasOwnProperty(association)) continue;
                     if (!session.elicitation.symptoms[session.elicitation.current_subject].has) continue;
                     if (triage_threshold_reached) continue;
                     session.elicitation.next_subject.push(association);
-                    
                 }
 
-                // Unshift when Impression is Not Yet Complete
+                // Place the Probed Symptom to the Start of the Array
                 if (action !== 'impression') {
                     const misplaced_subject = session.elicitation.next_subject.indexOf(next);
                     if (misplaced_subject !== -1) { session.elicitation.next_subject.splice(misplaced_subject, 1) }
                     session.elicitation.next_subject.unshift(next);
                 }
             }
+            // Save Impression to Session
+            if (action === 'impression') {
+                if (!session.elicitation.next_subject.length) { session.flags.assessment_flag = true; }
+                if (!session.elicitation.impression) { session.elicitation.impression = next; }
+            }
         }
-        // console.log(`Next Subject: [${session.elicitation.next_subject}]`);
     }    
 
     // * Transition to Assessment Phase
     if (session.flags.assessment_flag) {
-
-
-        
         triggerEvent(agent, ChatEvent.ASSESSMENT);
         return;
     } 
@@ -439,14 +438,16 @@ async function property_intent_flow(agent: any, operation: (response: any, sessi
     fullfilmentResponse(agent, response, session);
 }
 
-// * Fetch symptom properties from knowledge base.
+// * Fetch symptom properties from knowledge base
 async function fetchKnowledgeBase(session: any) {
     const new_subject = session.elicitation.next_subject.shift();
-    const knowledge: any = await getSymptomKnowledge(new_subject);
-    session.elicitation.current_associations = knowledge.associations;
-    session.elicitation.current_subject = new_subject;
-    session.elicitation.current_questions = knowledge.questions;    
-    session.elicitation.current_properties = {};
+    if (new_subject) {
+        const knowledge: any = await getSymptomKnowledge(new_subject);
+        session.elicitation.current_associations = knowledge.associations;
+        session.elicitation.current_subject = new_subject;
+        session.elicitation.current_questions = knowledge.questions;    
+        session.elicitation.current_properties = {};
+    }
 
     // * Skips Initial Symptom Has Property
     if (session.flags.initial_symptom) {

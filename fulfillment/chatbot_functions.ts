@@ -107,7 +107,8 @@ async function checkSymptomElicitationFlags(session: any) {
         next_subject: [],
         symptoms: {},
         previous_weights: {},
-        vector: Array(41).fill(0)
+        vector: Array(41).fill(0),
+        impression: null
     };
     session.flags.get_knowledge_flag = 0 === session.elicitation.current_questions.length && 0 !== session.elicitation.next_subject.length;
     session.flags.assessment_flag = session.flags.assessment_flag ?? false;

@@ -55,6 +55,9 @@ export enum ChatIntent {
     PAINKILLERS_NO = 'pain_killers_no',
 
     // * Assessment Phase
+    OBSTRUCTION = 'obstruction',
+    INFLAMMATION = 'inflammation',
+    CARDIOVASCULAR = 'cardiovascular',
     ASSESSMENT = 'assessment',
     MINIMAL = 'minimal_triage',
     DELAYED = 'delayed_triage',

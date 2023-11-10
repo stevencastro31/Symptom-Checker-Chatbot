@@ -20,11 +20,26 @@ const module_functions = {
 
 // * Main Flow of the Assessment Phase.
 async function assessments_flow(agent: any, response: any, session: any) {
+    // Prepare for General Impression
+    const impression = session.elicitation.impression;
+    const { obstruction, inflammation, cardiovascular } = session.disease_knowledge_base.groups;
+    console.log(`Assessment: ${impression}`)
+
     // Triage Computation
     const score = userToSeverity(session.elicitation.symptoms);
     const status = getStatusName(score);
 
+    // State Preassessment Response
     say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.PREASSESSMENT, session.language));
+
+    // State Impression Response
+    if (obstruction.includes(impression)) { say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.OBSTRUCTION, session.language)); }
+
+    else if (inflammation.includes(impression)) { say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.INFLAMMATION, session.language)); }
+
+    else if (cardiovascular.includes(impression)) { say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.CARDIOVASCULAR, session.language)); }
+
+    // State Triage Response
     switch (status) {
         case 'minimal': say(response, await getChatResponse(ChatModule.ASSESSMENT, ChatIntent.MINIMAL, session.language));
             break;
@@ -36,7 +51,7 @@ async function assessments_flow(agent: any, response: any, session: any) {
     }
 
     // Save Session
-    // await saveSession(session.userid, session.elicitation.symptoms, {score, status});
+    await saveSession(session.userid, session.elicitation.symptoms, {score, status});
 };
 
 // * Gives official triage term based on triage score.

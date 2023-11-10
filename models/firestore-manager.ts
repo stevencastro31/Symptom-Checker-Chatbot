@@ -201,6 +201,11 @@ async function setAssociation(path_name: string, sheet_name: string, collectioni
     data['threshold'] = 0.75;
     data['weights'] = weights;
     data['symptoms'] = symptoms;
+    data['groups'] = {
+        obstruction: ['emphysema', 'bronchitis'],
+        inflammation: ['asthma', 'pneumonia', 'tuberculosis', 'covid_19'],
+        cardiovascular: ['cardiomyopathy', 'hypertension', 'hypotension', 'valvular_heart_disease', 'coronary_artery_disease', 'myocardial_infarction']
+    }
 
     await updateFirestore(collectionid, 'diseases', data);
     
@@ -210,12 +215,12 @@ async function setData() {
     const path : string = './symptoms-modules.xlsx';
 
     setAssociation(path, 'Association', 'knowledge_base');
-    // await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
-    // await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
-    // await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
-    // await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
-    // await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
-    // await setSymptomsKnowledgeBase(path, 'Symptom Knowledge Base', 'knowledge_base');
+    await setDialogues(path, 'Introduction Dialogues', 'module_introduction');
+    await setDialogues(path, 'Assessment Dialogues', 'module_assessment');
+    await setDialogues(path, 'General Questions Dialogues', 'module_general_questions');
+    await setSymptomElicitationDialogues(path, 'Symptom Elicitation Dialogues', 'module_symptom_elicitation');
+    await setPropertyQuickReply(path, 'Property Quick Reply', 'module_property_reply');
+    await setSymptomsKnowledgeBase(path, 'Symptom Knowledge Base', 'knowledge_base');
 }
 
 export { setData };
