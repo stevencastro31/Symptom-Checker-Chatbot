@@ -308,7 +308,7 @@ async function symptom_elicitation_flow(agent: any, response: any[], session: an
         const previous_date = new Date(session.previous_session.timestamp._seconds * 1000);
         const current_date = new Date();
         const difference_in_hours = Math.round((current_date.getTime() - previous_date.getTime()) / (1000 * 3600));
-        const threshold = 18; // ! Current Threshold is 18 Hours
+        const threshold = 24; // ! Current Threshold is 24 Hours
 
         // if (difference_in_hours > threshold) {
         if (true) { // ! Only for Testing
